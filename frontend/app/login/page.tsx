@@ -1,15 +1,18 @@
+// frontend/app/login/page.tsx
+
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react'; // Agrupé imports
 import { useRouter } from 'next/navigation';
-import { signIn } from 'next-auth/react';
+import { useSession, signIn } from 'next-auth/react'; // Agrupé imports
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { loginSchema, LoginSchemaType } from '@/schemas/auth';
 
 export default function LoginPage() {
-  const [globalError, setGlobalError] = useState('')
+  const [globalError, setGlobalError] = useState('');
   const router = useRouter();
+  const { status } = useSession();
 
   const {
     register,
@@ -20,21 +23,31 @@ export default function LoginPage() {
   });
 
   const onSubmit = async (data: LoginSchemaType) => {
-    setGlobalError('')
+    setGlobalError('');
 
     const result = await signIn('credentials', {
       redirect: false,
       email: data.email,
       password: data.password
-    })
+    });
 
     if (result?.error){
-      setGlobalError(result.error)
+      setGlobalError(result.error);
     } else {
-      console.log('Login exitoso')
-      router.push('/dashboard')
-      router.refresh()
+      console.log('Login exitoso');
+      router.push('/dashboard');
+      router.refresh();
     }
+  };
+
+  useEffect(() => {
+    if (status === 'authenticated'){
+      router.replace('/dashboard');
+    }
+  }, [status, router]);
+
+  if (status === 'loading' || status === 'authenticated') {
+    return <div className="min-h-screen bg-gray-900 flex items-center justify-center text-white">Cargando...</div>;
   }
 
   return (
@@ -93,5 +106,5 @@ export default function LoginPage() {
         </form>
       </div>
     </div>
-  )
+  );
 }
