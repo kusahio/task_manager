@@ -14,7 +14,7 @@ export default async function Home() {
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-center p-24">
-      <h1 className="text-4xl font-bold">Todo List App</h1>
+      <h1 className="text-4xl font-bold">Task Manager App</h1>
       <p className="mt-4 text-xl">Backend con Python y Frontend Next js</p>
       <Link href={'/login'} className='px-8 py-2 rounded-3xl bg-blue-700 text-blue-100 mt-2 hover:bg-blue-900 transition-colors'>
         Iniciar Sesión

@@ -1,6 +1,7 @@
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 import { redirect } from 'next/navigation';
+import SessionExpired from '@/components/SessionExpired';
 
 interface TaskSummary {
   total_completed: number,
@@ -29,11 +30,10 @@ async function getDashboardData(token: string): Promise<TaskSummary | null | 'EX
 
 export default async function DashboardPage() {
   const session = await getServerSession(authOptions);
-
   const summary = await getDashboardData(session?.accessToken as string);
 
   if (summary === "EXPIRED") {
-    redirect("/api/auth/signout?callbackUrl=/login");
+    return <SessionExpired />
   }
 
   return (
@@ -57,7 +57,7 @@ export default async function DashboardPage() {
           </div>
 
           <div className="bg-gray-800 p-6 rounded-xl border border-gray-700 shadow-lg">
-            <h3 className="text-gray-400 text-sm uppercase font-semibold">Etiquetas</h3>
+            <h3 className="text-gray-400 text-sm uppercase font-semibold">Tags por tareas</h3>
             <ul className="mt-3 space-y-1">
               {Object.entries(summary.by_tag).map(([tag, count]) => (
                 <li key={tag} className="flex justify-between text-sm">
