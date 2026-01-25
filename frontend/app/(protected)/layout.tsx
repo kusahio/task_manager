@@ -2,6 +2,7 @@ import { getServerSession } from 'next-auth';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
 import { authOptions } from '../api/auth/[...nextauth]/route';
+import LogoutButton from '@/components/LogoutButton';
 
 export default async function ProtectedLayout({ children } : { children : React.ReactNode}) {
   const session = await getServerSession(authOptions);
@@ -32,9 +33,7 @@ export default async function ProtectedLayout({ children } : { children : React.
           <p className='text-sm font-medium truncate mb-2'>
             {session.user?.email}
           </p>
-          <Link href={'/api/auth/signout'} className='text-sm text-red-400 hover:text-red-300'>
-            Cerrar Sesión
-          </Link>
+          <LogoutButton />
         </div>
       </aside>
 
