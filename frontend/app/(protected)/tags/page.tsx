@@ -6,10 +6,12 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Tag, tagService } from '@/services/tag';
 import { TagSchemaType, tagSchema } from '@/schemas/tag';
 import { toast } from 'sonner';
+import ConfirmModal from '@/components/ConfirmModal';
 
 export default function TagsPage() {
   const [tags, setTags] = useState<Tag[]>([]);
   const [loading, setLoading] = useState(true);
+  const [tagToDelete, setTagToDelete] = useState<number | null>(null)
 
   const {
     register,
@@ -52,19 +54,23 @@ export default function TagsPage() {
     }
   }
 
-  const handleDelete = async (id: number) => {
-    if (!confirm('¿Estás seguro de eliminar esta etiqueta?')) {
-      return;
-    }
-
-    try {
-      await tagService.delete(id);
-      setTags((prevTags) => prevTags.filter(tag => tag.id !== id))
-      toast.success('Tag eliminado');
-    } catch (err) {
-      toast.error('No se pudo eliminar el Tag');
-    }
+  const handleDeleteClick = (id: number) => {
+    setTagToDelete(id)
   }
+
+  const onDeleteConfirm = async () => {
+    if (tagToDelete === null) return;
+
+    try{
+      await tagService.delete(tagToDelete);
+      setTags((prev) => prev.filter((tag) => tag.id !== tagToDelete));
+      toast.success('Tag eliminado')
+    } catch (err: any){
+      toast.error('No se pudo eliminar el Tag')
+    }
+    setTagToDelete(null)
+  }
+
 
   if (loading) {
     return <div className='text-white p-8'>Cargando etiquetas...</div>
@@ -127,7 +133,7 @@ export default function TagsPage() {
                   </div>
 
                   <button
-                    onClick={() => handleDelete(tag.id)}
+                    onClick={() => handleDeleteClick(tag.id)}
                     className="text-red-400 hover:text-red-300 text-sm px-2 py-1 rounded hover:bg-red-400/10"
                   >
                     Eliminar
@@ -138,6 +144,13 @@ export default function TagsPage() {
           )}
         </div>
       </div>
+      <ConfirmModal
+        isOpen={tagToDelete !== null}
+        onClose={() => setTagToDelete(null)}
+        onConfirm={onDeleteConfirm}
+        title="¿Eliminar Tag?"
+        message="Esta acción no se puede deshacer. El Tag desaparecerá de todas las tareas asignadas."
+      />
     </div>
   )
 }

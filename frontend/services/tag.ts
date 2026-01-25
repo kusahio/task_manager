@@ -3,13 +3,13 @@ import { getSession } from 'next-auth/react';
 const API_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
 
 export interface Tag{
-  id: number,
-  name: string,
+  id: number;
+  name: string;
   color: string | null;
 }
 
 export interface TagCreate{
-  name: string,
+  name: string;
   color?: string;
 }
 
