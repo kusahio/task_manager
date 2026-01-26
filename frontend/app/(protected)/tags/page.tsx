@@ -85,56 +85,56 @@ export default function TagsPage() {
           <form onSubmit={handleSubmit(onSubmit)} className='space-y-4'>
             <div>
               <label className='block text-sm text-gray-400 mb-1'>Nombre de etiqueta</label>
-              <input {...register('name')} type="text" placeholder='Ej: Trabajo, Urgente...'
+              <input {...register('name')} type='text' placeholder='Ej: Trabajo, Urgente...'
                 className='w-full bg-gray-700 text-white rounded p-2 focus:ring-2 focus:ring-blue-500 outline-none' />
               {errors.name && <span className='text-red-400 text-xs'>{errors.name.message}</span>}
             </div>
             <div>
-              <label className="block text-sm text-gray-400 mb-1">Color</label>
-              <div className="flex items-center gap-4">
+              <label className='block text-sm text-gray-400 mb-1'>Color</label>
+              <div className='flex items-center gap-4'>
                 <input
                   {...register('color')}
-                  type="color"
-                  className="h-10 w-20 cursor-pointer bg-transparent rounded"
-                  defaultValue="#3B82F6"
+                  type='color'
+                  className='h-10 w-20 cursor-pointer bg-transparent rounded'
+                  defaultValue='#3B82F6'
                 />
-                <span className="text-gray-500 text-sm">
+                <span className='text-gray-500 text-sm'>
                   {errors.color ?
-                    (<span className="text-red-400">{errors.color.message}</span>) :
-                    ("Elige un color distintivo")
+                    (<span className='text-red-400'>{errors.color.message}</span>) :
+                    ('Elige un color distintivo')
                   }
                 </span>
               </div>
             </div>
             <button
-              type="submit"
+              type='submit'
               disabled={isSubmitting}
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 rounded transition"
+              className='w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 rounded transition'
             >
               {isSubmitting ? 'Guardando...' : 'Crear Etiqueta'}
             </button>
           </form>
         </div>
-        <div className="bg-gray-800 p-6 rounded-xl shadow-lg">
-          <h2 className="text-xl font-semibold text-green-400 mb-4">Mis Etiquetas ({tags.length})</h2>
+        <div className='bg-gray-800 p-6 rounded-xl shadow-lg'>
+          <h2 className='text-xl font-semibold text-green-400 mb-4'>Mis Etiquetas ({tags.length})</h2>
 
           {tags.length === 0 ? (
-            <p className="text-gray-500">No hay etiquetas creadas aún.</p>
+            <p className='text-gray-500'>No hay etiquetas creadas aún.</p>
           ) : (
-            <div className="space-y-3 max-h-[400px] overflow-y-auto pr-2">
+            <div className='space-y-3 max-h-[400px] overflow-y-auto pr-2'>
               {tags.map((tag) => (
-                <div key={tag.id} className="flex items-center justify-between p-3 bg-gray-700/50 rounded-lg hover:bg-gray-700 transition">
-                  <div className="flex items-center gap-3">
+                <div key={tag.id} className='flex items-center justify-between p-3 bg-gray-700/50 rounded-lg hover:bg-gray-700 transition'>
+                  <div className='flex items-center gap-3'>
                     <span
-                      className="w-4 h-4 rounded-full shadow-sm"
+                      className='w-4 h-4 rounded-full shadow-sm'
                       style={{ backgroundColor: tag.color || '#ccc' }}
                     />
-                    <span className="text-white font-medium">{tag.name}</span>
+                    <span className='text-white font-medium'>{tag.name}</span>
                   </div>
 
                   <button
                     onClick={() => handleDeleteClick(tag.id)}
-                    className="text-red-400 hover:text-red-300 text-sm px-2 py-1 rounded hover:bg-red-400/10"
+                    className='text-red-400 hover:text-red-300 text-sm px-2 py-1 rounded hover:bg-red-400/10 cursor-pointer'
                   >
                     Eliminar
                   </button>
@@ -148,8 +148,8 @@ export default function TagsPage() {
         isOpen={tagToDelete !== null}
         onClose={() => setTagToDelete(null)}
         onConfirm={onDeleteConfirm}
-        title="¿Eliminar Tag?"
-        message="Esta acción no se puede deshacer. El Tag desaparecerá de todas las tareas asignadas."
+        title='¿Eliminar Tag?'
+        message='Esta acción no se puede deshacer. El Tag desaparecerá de todas las tareas asignadas.'
       />
     </div>
   )

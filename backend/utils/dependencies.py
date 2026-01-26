@@ -6,7 +6,7 @@ from config.database import get_db
 from models.user import User as UserModel
 from config.settings import settings
 
-oauth_scheme = OAuth2PasswordBearer(tokenUrl='/api/v1/users/login')
+oauth_scheme = OAuth2PasswordBearer(tokenUrl='/api/v1/users/token') # antes /login
 
 def get_current_user(token: str = Depends(oauth_scheme), db: Session = Depends(get_db)):
     credentials_exception = HTTPException(
