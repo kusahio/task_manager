@@ -22,6 +22,11 @@ async function getAuthHeaders() {
   };
 }
 
+interface TagUpdate{
+  name?: string;
+  color?: string;
+}
+
 export const tagService = {
   getAll: async (): Promise<Tag[]> => {
     const headers = await getAuthHeaders();
@@ -63,4 +68,18 @@ export const tagService = {
       throw new Error('No se pudo eliminar la etiqueta')
     }
   },
+  update: async (id: number, data: TagUpdate): Promise<Tag> => {
+    const headers = await getAuthHeaders();
+    const response = await fetch(`${API_URL}/tags/${id}`, {
+      method: 'PATCH',
+      headers,
+      body: JSON.stringify(data)
+    });
+
+    if(!response.ok){
+      throw new Error('Error al actualizar la etiqueta')
+    }
+
+    return response.json()
+  }
 }

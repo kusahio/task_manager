@@ -24,14 +24,14 @@ export default function ConfirmModal({
 
           <div className='flex justify-end gap-3'>
             <button onClick={onClose}
-            className='px-4 py-2 text-gray-400 hover:text-white hover:bg-gray-700 rounded-lg transition-colors text-sm font-medium'>
+            className='px-4 py-2 text-gray-400 hover:text-white hover:bg-gray-700 rounded-lg transition-colors text-sm font-medium cursor-pointer'>
               Cancelar
             </button>
             <button onClick={()=> {
               onConfirm();
               onClose();
               }}
-              className='px-4 py-2 text-gray-400 hover:text-white hover:bg-gray-700 rounded-lg transition-colors text-sm font-medium'>
+              className='px-4 py-2 text-gray-400 hover:text-white hover:bg-gray-700 rounded-lg transition-colors text-sm font-medium cursor-pointer'>
                 Si, eliminar
             </button>
           </div>
