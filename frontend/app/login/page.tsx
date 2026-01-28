@@ -2,9 +2,9 @@
 
 'use client';
 
-import { useEffect, useState } from 'react'; // Agrupé imports
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { useSession, signIn } from 'next-auth/react'; // Agrupé imports
+import { useSession, signIn } from 'next-auth/react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { loginSchema, LoginSchemaType } from '@/schemas/auth';
