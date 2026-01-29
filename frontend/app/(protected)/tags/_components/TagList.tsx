@@ -38,7 +38,7 @@ export default function TagList({tags, onDelete, onRefresh} : TagListProps){
       toast.success('El Tag se actualizó correctamente');
       onRefresh();
       cancelEditing();
-    } catch (err: unknown){
+    } catch (err: any){
       toast.error('No se pudo actualizar el Tag')
     }
   }

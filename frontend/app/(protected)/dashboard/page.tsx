@@ -30,7 +30,7 @@ async function getDashboardData(token: string): Promise<TaskSummary | null | 'EX
 
 export default async function DashboardPage() {
   const session = await getServerSession(authOptions);
-  const summary = await getDashboardData(session?.accessToken as string);
+  const summary = await getDashboardData(session?.user.accessToken as string);
 
   if (summary === "EXPIRED") {
     return <SessionExpired />

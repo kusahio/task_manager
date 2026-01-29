@@ -1,20 +1,37 @@
 import axios from 'axios';
-import Cookies from 'js-cookie';
+import { getSession, signOut } from 'next-auth/react';
+
+const baseURL = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://127.0.0.1:8000/api/v1';
 
 const api = axios.create({
-	baseURL: 'http://127.0.0.1:8000/api/v1',
-	headers: {
-		'Content-Type': 'application/json',
-	}
-})
-
-api.interceptors.request.use((config) => {
-	const token = Cookies.get('token');
-
-	if (token) {
-		config.headers.Authorization = `Bearer ${token}`;
-	}
-	return config;
+  baseURL,
+  headers: {
+    'Content-Type': 'application/json',
+  },
 });
+
+api.interceptors.request.use(async (config) => {
+  const session = await getSession();
+
+  if (session?.user?.accessToken) {
+    config.headers.Authorization = `Bearer ${session.user.accessToken}`;
+  }
+  
+  return config;
+});
+
+api.interceptors.response.use(
+  (response) => response,
+  async (error) => {
+    const isClient = typeof window !== 'undefined';
+    const isUnauthorized = error.response?.status === 401;
+
+    if (isClient && isUnauthorized && !window.location.pathname.includes('/login')){
+      await signOut();
+    }
+
+    return Promise.reject(error);
+  }
+);
 
 export default api;
