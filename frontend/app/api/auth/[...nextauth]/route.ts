@@ -1,5 +1,7 @@
 import NextAuth, { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
+import { login } from "@/services/auth";
+import { log } from "console";
 
 export const authOptions: NextAuthOptions = {
 
@@ -12,36 +14,52 @@ export const authOptions: NextAuthOptions = {
       },
 
       async authorize(credentials) {
+        if (!credentials?.email || !credentials?.password) return null;
 
-        const res = await fetch(process.env.NEXT_PUBLIC_BACKEND_URL+'/users/login', {
-          method: "POST",
-          body: JSON.stringify({
-            email: credentials?.email,
-            password: credentials?.password,
-          }),
-          headers: { "Content-Type": "application/json" },
-        });
+        try{
+          const data = await login(credentials.email, credentials.password);
 
-        const user = await res.json();
+          if (data){
+            return {
+              id: '1',
+              email: credentials.email,
+              accessToken: data.access_token,
+            };
+          }
+          return null;
+        } catch (err){
+          throw new Error(`Credenciales inválidas`)
+        }
 
-        if (!res.ok) throw new Error(user.detail || "Credenciales inválidas");
-        return user;
+        // const res = await fetch(process.env.NEXT_PUBLIC_BACKEND_URL+'/users/login', {
+        //   method: "POST",
+        //   body: JSON.stringify({
+        //     email: credentials?.email,
+        //     password: credentials?.password,
+        //   }),
+        //   headers: { "Content-Type": "application/json" },
+        // });
+
+        // const user = await res.json();
+
+        // if (!res.ok) throw new Error(user.detail || "Credenciales inválidas");
+        // return user;
       }
     })
   ],
-  session: {
-    strategy: "jwt",
-    maxAge: 2 * 60,
-  },
+  // session: {
+  //   strategy: "jwt",
+  //   maxAge: 7 * 24 * 60 * 60,
+  // },
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
-        token.accessToken = user.access_token;
+        token.accessToken = user.accessToken
       }
       return token;
     },
     async session({ session, token }) {
-      session.accessToken = token.accessToken;
+      session.user.accessToken = token.accessToken
       return session;
     }
   },

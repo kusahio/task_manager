@@ -1,14 +1,18 @@
-import api from '@/utils/api';
+import axios from 'axios';
+
+const apiURL = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://127.0.0.1:8000/api/v1'
 
 export const login = async (email: string, password: string) => {
   try {
-    const response = await api.post('/users/login', { 
-        username: email,
-        password: password 
-    }, {
-
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
-    });
+    const response = await axios.post(`${apiURL}/users/login`, 
+      {
+        email: email,
+        password: password
+      }, 
+      {
+        headers: { 'Content-Type': 'application/json' }
+      }
+    );
     
     return response.data; 
   } catch (error: any) {
