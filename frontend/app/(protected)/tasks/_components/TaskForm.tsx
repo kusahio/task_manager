@@ -117,7 +117,7 @@ export default function TaskForm({ tags, onSuccess, taskToEdit, onCancel }: Task
           />
         </div>
         <div className='flex flex-col gap-1'>
-          <label className='text-xs uppercase font-bold text-gray-500'>Tags</label>
+          <label className='text-xs uppercase font-bold text-gray-500'>Etiquetas</label>
           <TagSelector
             availableTags={tags}
             selectedTagIds={selectedTags}

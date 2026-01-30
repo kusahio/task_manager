@@ -37,32 +37,32 @@ export default async function DashboardPage() {
   }
 
   return (
-    <div>
-      <h1 className="text-3xl font-bold mb-6">Resumen de Actividad</h1>
+    <div className='max-w-5xl mx-auto'>
+      <h1 className="text-2xl md:text-3xl font-bold mb-6 md:mb-8">Resumen de Actividad</h1>
       
       {!summary ? (
         <div className="p-4 bg-yellow-900/50 border border-yellow-700 rounded text-yellow-200">
           No hay datos disponibles. ¿Ya creaste tareas?
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="bg-gray-800 p-6 rounded-xl border border-gray-700 shadow-lg">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="bg-gray-800 p-6 rounded-xl border border-gray-700 shadow-lg transform transition hover:scale-105">
             <h3 className="text-gray-400 text-sm uppercase font-semibold">Completadas</h3>
             <p className="text-4xl font-bold text-green-400 mt-2">{summary.total_completed}</p>
           </div>
           
-          <div className="bg-gray-800 p-6 rounded-xl border border-gray-700 shadow-lg">
+          <div className="bg-gray-800 p-6 rounded-xl border border-gray-700 shadow-lg transform transition hover:scale-105">
             <h3 className="text-gray-400 text-sm uppercase font-semibold">Pendientes</h3>
             <p className="text-4xl font-bold text-yellow-400 mt-2">{summary.total_pending}</p>
           </div>
 
-          <div className="bg-gray-800 p-6 rounded-xl border border-gray-700 shadow-lg">
+          <div className="bg-gray-800 p-6 rounded-xl border border-gray-700 shadow-lg sm:col-span-2 lg:col-span-1">
             <h3 className="text-gray-400 text-sm uppercase font-semibold">Etiquetas asignadas por tareas</h3>
-            <ul className="mt-3 space-y-1">
+            <ul className="mt-3 space-y-2 max-h-40 overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-gray-600">
               {Object.entries(summary.by_tag).map(([tag, count]) => (
-                <li key={tag} className="flex justify-between text-sm">
-                  <span className="text-blue-300">#{tag}</span>
-                  <span className="text-gray-400">{count}</span>
+                <li key={tag} className="flex justify-between text-sm p-2 bg-gray-900/50 rounded hover:bg-gray-700/50 transition">
+                  <span className="text-blue-300 font-medium">#{tag}</span>
+                  <span className="text-white font-bold bg-gray-700 px-2 py-0.5 rounded-full text-xs">{count}</span>
                 </li>
               ))}
             </ul>

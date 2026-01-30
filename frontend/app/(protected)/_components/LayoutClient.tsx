@@ -30,7 +30,7 @@ export default function LayoutClient({ children, userEmail} : Props){
   const navItems = [
     {href: '/dashboard', label: 'Dashboard'},
     {href: '/tasks', label: 'Mis tareas'},
-    {href: '/etiquetas', label: 'Etiquetas'}
+    {href: '/tags', label: 'Etiquetas'}
   ];
 
   return (

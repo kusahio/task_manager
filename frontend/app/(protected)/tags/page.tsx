@@ -29,11 +29,11 @@ export default function TagsPage() {
   const onDeleteConfirm = async () => {
     if (tagToDelete === null) return;
 
-    try{
+    try {
       await tagService.delete(tagToDelete);
       setTags((prev) => prev.filter((tag) => tag.id !== tagToDelete));
       toast.success('Etiqueta eliminada')
-    } catch (err: any){
+    } catch (err: any) {
       toast.error('No se pudo eliminar la etiqueta')
     }
     setTagToDelete(null)
@@ -45,15 +45,19 @@ export default function TagsPage() {
   }
 
   return (
-    <div className='p-8'>
-      <h1 className='text-3xl font-bold text-white mb-8'>Etiquetas</h1>
-      <div className='grid grid-cols-1 md:grid-cols-2 gap-8'>
-        <TagForm onSuccess={loadTags}/>
-        <TagList
-          tags={tags}
-          onDelete={ (id) => setTagToDelete(id)}
-          onRefresh={loadTags}
-        />
+    <div className='p-4 md:p-8 max-w-6xl mx-auto'>
+      <h1 className='text-2xl md:text-3xl font-bold text-white mb-6 md:mb-8'>Etiquetas</h1>
+      <div className='grid grid-cols-1 lg:grid-cols-2 gap-8 items-start'>
+        <div className='bg-gray-800 p-5 md:p-6 rounded-xl border border-gray-700 shadow-lg'>
+          <TagForm onSuccess={loadTags} />
+        </div>
+        <div className='bg-gray-800/50 p-5 md:p-6 rounded-xl border border-gray-700'>
+          <TagList
+            tags={tags}
+            onDelete={(id) => setTagToDelete(id)}
+            onRefresh={loadTags}
+          />
+        </div>
       </div>
       <ConfirmModal
         isOpen={tagToDelete !== null}
