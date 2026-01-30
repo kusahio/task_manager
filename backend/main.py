@@ -7,7 +7,7 @@ from config.settings import settings
 Base.metadata.create_all(bind=engine)
 
 app = FastAPI(
-    title='TODO List API',
+    title='Task Manager API',
     description='API creada con FastAPI, SQLAlchemy y Pydantic',
     version='1.0.0'
 )
