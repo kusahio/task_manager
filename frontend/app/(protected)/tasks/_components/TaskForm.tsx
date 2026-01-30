@@ -1,21 +1,24 @@
 'use client';
 
+import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { toast } from 'sonner';
 import { Tag } from '@/services/tag';
-import { taskService } from '@/services/task';
+import { Task, taskService } from '@/services/task';
 import { TaskSchema, taskSchema } from '@/schemas/task';
 import TagSelector from './TagSelector';
 import Button from '@/components/ui/Button';
 import { title } from 'process';
 
-interface TaskFormProps{
+interface TaskFormProps {
   tags: Tag[];
   onSuccess: () => void;
+  taskToEdit?: Task | null;
+  onCancel?: () => void;
 }
 
-export default function TaskForm({tags, onSuccess} : TaskFormProps){
+export default function TaskForm({ tags, onSuccess, taskToEdit, onCancel }: TaskFormProps) {
   const {
     register,
     handleSubmit,
@@ -33,10 +36,29 @@ export default function TaskForm({tags, onSuccess} : TaskFormProps){
     }
   })
 
+  useEffect(() => {
+    if (taskToEdit) {
+      const formatedDate = taskToEdit.deadline
+        ? new Date(taskToEdit.deadline).toISOString().split('T')[0]
+        : ''
+
+      reset({
+        title: taskToEdit.title,
+        description: taskToEdit.description,
+        deadline: formatedDate,
+        tags: taskToEdit?.tags.map(tag => tag.id)
+      });
+    } else {
+      reset({ title: '', description: '', deadline: '', tags: [] });
+    }
+
+
+  }, [taskToEdit, reset])
+
   const selectedTags = watch('tags') || [];
 
   const onSubmit = async (data: TaskSchema) => {
-    try{
+    try {
       const payload = {
         title: data.title,
         description: data.description || undefined,
@@ -44,18 +66,24 @@ export default function TaskForm({tags, onSuccess} : TaskFormProps){
         deadline: data.deadline ? new Date(data.deadline).toISOString() : null
       };
 
-      await taskService.create(payload);
-
-      toast.success('Tarea Creada');
-      reset();
+      if (taskToEdit) {
+        await taskService.update(taskToEdit.id, payload);
+        toast.success('La tarea se ha actualizado')
+      } else {
+        await taskService.create(payload)
+        toast.success('Tarea creada exitosamente');
+        reset();
+      }
       onSuccess();
-    } catch (err: any){
-      toast.error(err.toString() || 'hubo un error al crear la tarea');
+    } catch (err: any) {
+      toast.error(err.toString() || 'Hubo un error al crear/actualizar la tarea');
     }
   }
   return (
-    <div className='bg-gray-800 p-6 rounded-xl shadow-lg border border-gray-700 h-fit'>
-      <h2 className='text-xl font-bold text-white mb-4 flex intems-center gap-2'>Crear Nueva tarea</h2>
+    <div className={`${!taskToEdit ? 'bg-gray-800 p-6 rounded-xl shadow-lg border border-gray-700' : ''} h-fit`}>
+      <h2 className='text-xl font-bold text-white mb-4 flex intems-center gap-2'>
+        {taskToEdit ? 'Editar Tarea' : 'Crear Nueva Tarea'}
+      </h2>
 
       <form onSubmit={handleSubmit(onSubmit)} className='space-y-4'>
         <div>
@@ -96,14 +124,26 @@ export default function TaskForm({tags, onSuccess} : TaskFormProps){
             onChange={(newTags) => setValue('tags', newTags)}
           />
         </div>
-        <Button
-          type='submit'
-          variant='primary'
-          isLoading={isSubmitting}
-          className='w-full'
-        >
-          {isSubmitting ? 'Guardando...' : 'Crear tarea'}
-        </Button>
+        <div className='flex gap-3 pt-2'>
+          {taskToEdit && onCancel && (
+            <Button
+              type='button'
+              variant='ghost'
+              onClick={onCancel}
+              className='flex-1'
+            >
+              Cancelar
+            </Button>
+          )}
+          <Button
+            type='submit'
+            variant='primary'
+            isLoading={isSubmitting}
+            className={taskToEdit ? 'flex-1' : 'w-full'}
+          >
+            {isSubmitting ? 'Guardando...' : (taskToEdit ? 'Guardar Cambios' : 'Crear Tarea')}
+          </Button>
+        </div>
       </form>
     </div>
   )

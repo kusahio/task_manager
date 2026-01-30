@@ -1,5 +1,6 @@
 # crud/task.py
 from models.task import Task as TaskModel
+from models.tag import Tag as TagModel
 from config.database import Base, engine
 from sqlalchemy.orm import Session
 from schemas.task import TaskCreate, TaskUpdate
@@ -7,7 +8,15 @@ from schemas.task import TaskCreate, TaskUpdate
 Base.metadata.create_all(bind=engine)
 
 def create_task(db: Session, task: TaskCreate, user_id: int):
-    new_task = TaskModel(**task.model_dump(), user_id=user_id)
+    task_data = task.model_dump()
+
+    tags_id = task_data.pop('tags', [])
+    new_task = TaskModel(**task_data, user_id=user_id)
+
+    if tags_id:
+        tags_objects = db.query(TagModel).filter(TagModel.id.in_(tags_id)).all()
+        new_task.tags = tags_objects
+
     db.add(new_task)
     db.commit()
     db.refresh(new_task)
@@ -35,6 +44,11 @@ def update_task(db: Session, task_id: int, task_update: TaskUpdate, user_id: int
         return None
 
     update_data = task_update.model_dump(exclude_unset=True)
+
+    if 'tags' in update_data:
+        tag_ids = update_data.pop('tags')
+        tags_objects = db.query(TagModel).filter(TagModel.id.in_(tag_ids)).all()
+        db_task.tags = tags_objects
 
     for key, value in update_data.items():
         setattr(db_task, key, value)

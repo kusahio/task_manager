@@ -10,9 +10,10 @@ import Button from '@/components/ui/Button';
 interface TaskListProps{
   tasks: Task[];
   onTaskUpdate: () => void;
+  onEditTask: (task: Task) => void;
 }
 
-export default function TaskList({tasks, onTaskUpdate} : TaskListProps) {
+export default function TaskList({tasks, onTaskUpdate, onEditTask} : TaskListProps) {
   const [taskToDelete, setTaskToDelete] = useState<number | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
 
@@ -58,7 +59,13 @@ export default function TaskList({tasks, onTaskUpdate} : TaskListProps) {
     <>
       <div className='space-y-3'>
         {tasks.map(task => (
-          <TaskItem key={task.id} task={task} onToggle={handleToggle} onDelete={(id) => setTaskToDelete(id)}/>
+          <TaskItem 
+            key={task.id} 
+            task={task} 
+            onToggle={handleToggle} 
+            onDelete={(id) => setTaskToDelete(id)}
+            onEdit={onEditTask}
+          />
         ))}
       </div>
       <Modal isOpen={taskToDelete !== null} onClose={() => setTaskToDelete(null)} title='¿Eliminar Tarea?'>

@@ -7,17 +7,19 @@ interface TaskItemProps {
   task: Task;
   onToggle: (task: Task) => void;
   onDelete: (id: number) => void;
+  onEdit: (task: Task) => void;
 }
 
-export default function TaskItem({task, onToggle, onDelete} : TaskItemProps) {
-  const formDate = (dateString? : string) => {
-    if(!dateString) return null;
+export default function TaskItem({ task, onToggle, onDelete, onEdit }: TaskItemProps) {
+  
+  const formatDate = (dateString?: string) => {
+    if (!dateString) return null;
 
     return new Date(dateString).toLocaleDateString('es-ES', {
       day: 'numeric',
       month: 'short'
-    })
-  }
+    });
+  };
 
   return (
     <div className={`group flex items-start gap-4 p-4 rounded-xl border transition-all duration-200
@@ -26,7 +28,7 @@ export default function TaskItem({task, onToggle, onDelete} : TaskItemProps) {
       : 'bg-gray-800 border-gray-700 hover:border-gray-600 shadow-sm'}`
     }>
       <button
-        onClick={()=> onToggle(task)}
+        onClick={() => onToggle(task)}
         className={`cursor-pointer mt-1 w-6 h-6 rounded-full border-2 flex items-center justify-center transition-colors
         ${task.completed 
           ? 'bg-green-500 border-green-500 text-white' 
@@ -39,7 +41,7 @@ export default function TaskItem({task, onToggle, onDelete} : TaskItemProps) {
       <div className='flex-1 min-w-0'>
         <h3 className={`text-lg font-medium truncate transition-all
           ${task.completed ? 'text-gray-500 line-through' : 'text-white'}`}>
-            {task.title}
+          {task.title}
         </h3>
         {task.description && (
           <p className={`text-sm mt-1 ${task.completed ? 'text-gray-600' : 'text-gray-400'}`}>
@@ -49,7 +51,7 @@ export default function TaskItem({task, onToggle, onDelete} : TaskItemProps) {
         <div className='flex flex-wrap items-center gap-3 mt-3'>
           {task.deadline && (
             <span className={`text-xs flex items-center gap-1 ${task.completed ? 'text-gray-600' : 'text-red-400'}`}>
-              {formDate(task.deadline)}
+              {formatDate(task.deadline)}
             </span>
           )}
 
@@ -64,14 +66,27 @@ export default function TaskItem({task, onToggle, onDelete} : TaskItemProps) {
           ))}
         </div>
       </div>
-      <Button
-        variant='ghost'
-        onClick={() => onDelete(task.id)}
-        className='text-gray-500 hover:text-red-500 hover:bg-red-500/10 p-2 h-auto opacity-0 group-hover:opacity-100 transition-all'
-        title='Eliminar Tarea'
-      >
-        Eliminar tarea
-      </Button>
+
+      <div className="flex flex-col gap-1 opacity-0 group-hover:opacity-100 transition-opacity focus-within:opacity-100">
+        
+        <Button
+          variant='ghost'
+          onClick={() => onEdit(task)} // 👈 Llamamos a la función de editar
+          className='text-gray-500 hover:text-blue-400 hover:bg-blue-500/10 p-2 h-auto'
+          title='Editar Tarea'
+        >
+          Editar
+        </Button>
+        <Button
+          variant='ghost'
+          onClick={() => onDelete(task.id)}
+          className='text-gray-500 hover:text-red-500 hover:bg-red-500/10 p-2 h-auto'
+          title='Eliminar Tarea'
+        >
+          Eliminar
+        </Button>
+      </div>
+
     </div>
-  )
+  );
 }
