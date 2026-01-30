@@ -12,3 +12,4 @@ class User(Base):
     hashed_password = Column(String)
 
     tasks = relationship('Task', back_populates='user', cascade='all,delete-orphan')
+    tags = relationship('Tag', back_populates='owner')

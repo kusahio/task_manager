@@ -16,5 +16,7 @@ class Tag(Base):
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String, unique=True, nullable=False)
     color = Column(String, nullable=True)
+    user_id = Column(Integer, ForeignKey('users.id'))
 
     tasks = relationship('Task', secondary='task_tags', back_populates='tags')
+    owner = relationship('User', back_populates='tags')
