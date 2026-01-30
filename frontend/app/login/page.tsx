@@ -1,5 +1,3 @@
-// frontend/app/login/page.tsx
-
 'use client';
 
 import { useEffect, useState } from 'react';
@@ -8,6 +6,8 @@ import { useSession, signIn } from 'next-auth/react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { loginSchema, LoginSchemaType } from '@/schemas/auth';
+import Link from 'next/link';
+import Button from '@/components/ui/Button';
 
 export default function LoginPage() {
   const [globalError, setGlobalError] = useState('');
@@ -47,63 +47,81 @@ export default function LoginPage() {
   }, [status, router]);
 
   if (status === 'loading' || status === 'authenticated') {
-    return <div className="min-h-screen bg-gray-900 flex items-center justify-center text-white">Cargando...</div>;
+    return (
+      <div className="min-h-screen bg-gray-950 flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
+      </div>
+    )
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gray-900 text-white">
-      <div className="w-full max-w-md p-8 bg-gray-800 rounded-lg shadow-lg">
-        <h2 className="text-3xl font-bold text-center mb-6 text-blue-400">
-          Iniciar Sesión
+    <div className="min-h-screen w-full flex items-center justify-center bg-gray-950 p-4 md:p-6">
+      <div className="w-full max-w-md bg-gray-900/80 backdrop-blur-lg p-6 md:p-8 rounded-2xl shadow-2xl border border-gray-800 relative overflow-hidden">
+        <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-500 to-purple-500"></div>
+        <h2 className="text-3xl font-bold text-center mb-2 text-white">
+          Bienvenido
         </h2>
-
+        <p className="text-gray-400 text-center mb-8 text-sm">
+          Ingresa tus credenciales para continuar
+        </p>
         {globalError && (
-          <div className="bg-red-500/20 border border-red-500 text-red-300 px-4 py-2 rounded mb-4 text-sm">
+          <div className="bg-red-500/10 border border-red-500/50 text-red-400 px-4 py-3 rounded-lg mb-6 text-sm flex items-center gap-2">
             {globalError}
           </div>
         )}
 
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
           <div>
-            <label className="block text-sm font-medium mb-2">Email</label>
+            <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Email</label>
             <input
               {...register('email')}
               type="email"
-              className={`w-full px-4 py-2 bg-gray-700 border rounded focus:outline-none text-white transition-colors
-                ${errors.email ? 'border-red-500 focus:border-red-500' : 'border-gray-600 focus:border-blue-500'}
+              className={`w-full px-4 py-3 bg-gray-800/50 border rounded-xl focus:outline-none text-white transition-all
+                ${errors.email 
+                  ? 'border-red-500 focus:ring-1 focus:ring-red-500' 
+                  : 'border-gray-700 focus:border-blue-500 focus:ring-1 focus:ring-blue-500'}
               `}
               placeholder="tu@email.com"
-              required
+              autoComplete="email"
             />
             {errors.email && (
-              <p className="text-red-400 text-xs mt-1">{errors.email.message}</p>
+              <p className="text-red-400 text-xs mt-1 ml-1">{errors.email.message}</p>
             )}
           </div>
 
           <div>
-            <label className="block text-sm font-medium mb-2">Contraseña</label>
+            <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Password</label>
             <input
               {...register('password')}
               type="password"
-              className={`w-full px-4 py-2 bg-gray-700 border rounded focus:outline-none text-white transition-colors
-                ${errors.password ? 'border-red-500 focus:border-red-500' : 'border-gray-600 focus:border-blue-500'}
+              className={`w-full px-4 py-3 bg-gray-800/50 border rounded-xl focus:outline-none text-white transition-all
+                ${errors.password 
+                  ? 'border-red-500 focus:ring-1 focus:ring-red-500' 
+                  : 'border-gray-700 focus:border-blue-500 focus:ring-1 focus:ring-blue-500'}
               `}  
               placeholder="••••••"
-              required
             />
             {errors.password && (
-              <p className="text-red-400 text-xs mt-1">{errors.password.message}</p>
+              <p className="text-red-400 text-xs mt-1 ml-1">{errors.password.message}</p>
             )}
           </div>
 
-          <button
+          <Button
             type="submit"
-            disabled={isSubmitting}
-            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition duration-200"
+            variant="primary"
+            isLoading={isSubmitting}
+            className="w-full mt-2"
           >
-            {isSubmitting ? 'Verificando...' : 'Entrar'}
-          </button>
+            Ingresar
+          </Button>
         </form>
+
+        <div className="mt-8 text-center">
+          <Link href="/" className="text-sm text-gray-500 hover:text-blue-400 transition-colors">
+            ← Volver al inicio
+          </Link>
+        </div>
+
       </div>
     </div>
   );
