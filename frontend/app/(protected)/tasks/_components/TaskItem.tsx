@@ -71,7 +71,7 @@ export default function TaskItem({ task, onToggle, onDelete, onEdit }: TaskItemP
         
         <Button
           variant='ghost'
-          onClick={() => onEdit(task)} // 👈 Llamamos a la función de editar
+          onClick={() => onEdit(task)}
           className='text-gray-500 hover:text-blue-400 hover:bg-blue-500/10 p-2 h-auto'
           title='Editar Tarea'
         >

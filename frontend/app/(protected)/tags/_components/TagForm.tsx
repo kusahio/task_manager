@@ -30,11 +30,11 @@ export default function TagForm({onSuccess} : TagFormProps){
   const onSubmit = async (data: TagSchemaType) => {
     try {
       await tagService.create({ ...data, color: data.color || '#3b82f6' });
-      toast.success('Tag creado correctamente!')
+      toast.success('Etiqueta creada correctamente!')
       reset();
       onSuccess();
     } catch (err) {
-      toast.error('Error al crear el Tag');
+      toast.error('Error al crear crear la etiqueta');
     }
   }
 
@@ -44,7 +44,7 @@ export default function TagForm({onSuccess} : TagFormProps){
 
       <form onSubmit={handleSubmit(onSubmit)} className='space-y-4'>
         <div>
-          <label className='block text-sm text-gray-400 mb-1'>Nombre del Tag</label>
+          <label className='block text-sm text-gray-400 mb-1'>Nombre de la etiqueta</label>
           <input
             {...register('name')}
             className={`w-full bg-gray-700 text-white rounder p-2 focus:outline-none border 
@@ -65,7 +65,7 @@ export default function TagForm({onSuccess} : TagFormProps){
           type='submit'
           className='w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 rounded transition disabled:opacity-50 cursor-pointer'
         >
-          {isSubmitting ? 'Guardando...' : 'Crear Tag'}
+          {isSubmitting ? 'Guardando...' : 'Crear etiqueta'}
         </button>
       </form>
     </div>

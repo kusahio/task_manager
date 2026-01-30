@@ -23,7 +23,7 @@ export default function TagSelector({
   }
 
   if (availableTags.length === 0){
-    return <p className='text-gray-500 text-xs italic'>No existen Tags creados aún</p>
+    return <p className='text-gray-500 text-xs italic'>No existen etiquetas creadas aún</p>
   }
 
   return (

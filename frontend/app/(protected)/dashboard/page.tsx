@@ -57,7 +57,7 @@ export default async function DashboardPage() {
           </div>
 
           <div className="bg-gray-800 p-6 rounded-xl border border-gray-700 shadow-lg">
-            <h3 className="text-gray-400 text-sm uppercase font-semibold">Tags por tareas</h3>
+            <h3 className="text-gray-400 text-sm uppercase font-semibold">Etiquetas asignadas por tareas</h3>
             <ul className="mt-3 space-y-1">
               {Object.entries(summary.by_tag).map(([tag, count]) => (
                 <li key={tag} className="flex justify-between text-sm">

@@ -29,17 +29,17 @@ export default function TagList({tags, onDelete, onRefresh} : TagListProps){
 
   const handleSave = async (id: number) => {
     if(!editName){
-      toast.error('El nombre del Tag no puede estar vacío');
+      toast.error('El nombre de la etiqueta no puede estar vacío');
       return;
     }
 
     try{
       await tagService.update(id, {name: editName, color: editColor});
-      toast.success('El Tag se actualizó correctamente');
+      toast.success('La etiqueta se actualizó correctamente');
       onRefresh();
       cancelEditing();
     } catch (err: any){
-      toast.error('No se pudo actualizar el Tag')
+      toast.error('No se pudo actualizar la etiqueta')
     }
   }
 
@@ -50,11 +50,11 @@ export default function TagList({tags, onDelete, onRefresh} : TagListProps){
 
   return (
     <div className='bg-gray-800 p-6 rounded-xl shadow-lg'>
-      <h2 className='text-xl font-semibold text-green-400 mb-4'>Mis Tags</h2>
+      <h2 className='text-xl font-semibold text-green-400 mb-4'>Mis etiquetas</h2>
 
       {tags.length === 0 ? (
           <p className='text-gray-500 text-center py-4'>
-            No existen Tags
+            No existen etiquetas aún
           </p>
         ) : (
           <div className='space-y-3 max-h-[400px] overflow-y-auto pr-2 custom-scrollbar'>

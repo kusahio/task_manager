@@ -32,9 +32,9 @@ export default function TagsPage() {
     try{
       await tagService.delete(tagToDelete);
       setTags((prev) => prev.filter((tag) => tag.id !== tagToDelete));
-      toast.success('Tag eliminado')
+      toast.success('Etiqueta eliminada')
     } catch (err: any){
-      toast.error('No se pudo eliminar el Tag')
+      toast.error('No se pudo eliminar la etiqueta')
     }
     setTagToDelete(null)
   }
@@ -59,8 +59,8 @@ export default function TagsPage() {
         isOpen={tagToDelete !== null}
         onClose={() => setTagToDelete(null)}
         onConfirm={onDeleteConfirm}
-        title='¿Eliminar Tag?'
-        message='Esta acción no se puede deshacer. El Tag desaparecerá de todas las tareas asignadas.'
+        title='¿Eliminar etiqueta?'
+        message='Esta acción no se puede deshacer. La etiqueta desaparecerá de todas las tareas asignadas.'
       />
     </div>
   )
