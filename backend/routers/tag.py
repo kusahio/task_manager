@@ -4,7 +4,7 @@ from sqlalchemy.orm import Session
 from typing import List
 from config.database import get_db
 from schemas.tag import Tag, TagCreate, TagUpdate
-import crud.tag as crud_tag
+import backend.repositories.tag_repository as crud_tag
 from models.user import User as UserModel
 from utils.dependencies import get_current_user
 

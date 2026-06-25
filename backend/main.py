@@ -1,8 +1,10 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
 from config.database import Base, engine
 from routers.api_v1 import api_router
 from config.settings import settings
+from utils.errors import AppBaseException
 
 Base.metadata.create_all(bind=engine)
 
@@ -24,10 +26,23 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+
+@app.exception_handler(AppBaseException)
+async def app_base_exception_handler(request, exc: AppBaseException):
+    return JSONResponse(
+        status_code=exc.status_code,
+        content={
+            "status": "error",
+            "code": exc.status_code,
+            "message": exc.message
+        }
+    )
+
 app.include_router(api_router, prefix='/api/v1')
+
 
 @app.get('/')
 def home():
     return {
-        'message' : 'Bienvenido a la api de TODO List'
+        'message': 'Bienvenido a la api de TODO List'
     }
