@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
-from typing import List, Dict
+from typing import List
 from config.database import get_db
 from schemas.task import Task, TaskCreate, TaskUpdate, TaskSummary
 from utils.dependencies import get_current_user
