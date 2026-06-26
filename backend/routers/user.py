@@ -1,13 +1,13 @@
-# routers/user.py
 from fastapi import APIRouter, Depends, HTTPException, status, Header
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 from config.database import get_db
-from repositories.user_repository import create_user, get_user_by_email
 from schemas.user import UserCreate, User, UserLogin
 from services.auth import auth_user
 from utils.jwt_manager import create_access_token
 from config.settings import settings
+
+import services.user_service as user_service
 
 router = APIRouter(prefix='/users', tags=['Users'])
 
@@ -19,12 +19,20 @@ def verify_signup_secret(x_signup_token: str = Header(None)):
 
 @router.post('/', response_model=User, status_code=status.HTTP_201_CREATED)
 def create_new_user(user: UserCreate, db: Session = Depends(get_db), secret_check: str = Depends(verify_signup_secret)):
-    email_exist = get_user_by_email(db, email=user.email)
+    return user_service.create_user(db=db, user=user)
 
-    if email_exist:
-        raise HTTPException(status_code=400, detail='El email ya existe')
-    
-    return create_user(db=db, user=user)
+@router.get('/users/{user_id}', response_model=User)
+def get_user(db: Session, user_id: int):
+    return user_service.get_user(db=db, user_id=user_id)
+
+@router.get('/users/email/{email}', response_model=User)
+def get_user_by_email(db: Session, email: str):
+    return user_service.get_user_by_email(db=db, email=email)
+
+@router.get('/users', response_model=list[User])
+def get_users(db: Session, skip: int = 0, limit: int = 100):
+    return user_service.get_users(db=db, skip=skip, limit=limit)
+
 
 @router.post('/login')
 def login(user_login: UserLogin, db: Session = Depends(get_db)):

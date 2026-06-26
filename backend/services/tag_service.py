@@ -1,7 +1,7 @@
 from sqlalchemy.orm import Session
 from schemas.tag import TagCreate, TagUpdate
 from utils.errors import NotFoundException, AppBaseException
-from ..repositories import tag_repository
+import repositories.tag_repository as tag_repository
 
 TAG_NOT_FOUND = "Etiqueta no encontrada"
 
