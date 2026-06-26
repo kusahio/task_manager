@@ -21,16 +21,16 @@ def verify_signup_secret(x_signup_token: str = Header(None)):
 def create_new_user(user: UserCreate, db: Session = Depends(get_db), secret_check: str = Depends(verify_signup_secret)):
     return user_service.create_user(db=db, user=user)
 
-@router.get('/users/{user_id}', response_model=User)
-def get_user(db: Session, user_id: int):
+@router.get('/{user_id}', response_model=User)
+def get_user(db: Session = Depends(get_db), user_id: int):
     return user_service.get_user(db=db, user_id=user_id)
 
-@router.get('/users/email/{email}', response_model=User)
-def get_user_by_email(db: Session, email: str):
+@router.get('/email/{email}', response_model=User)
+def get_user_by_email(db: Session = Depends(get_db), email: str):
     return user_service.get_user_by_email(db=db, email=email)
 
-@router.get('/users', response_model=list[User])
-def get_users(db: Session, skip: int = 0, limit: int = 100):
+@router.get('/', response_model=list[User])
+def get_users(db: Session = Depends(get_db), skip: int = 0, limit: int = 100):
     return user_service.get_users(db=db, skip=skip, limit=limit)
 
 
