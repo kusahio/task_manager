@@ -1,17 +1,30 @@
-# tests/conftest.py
 import pytest
 from fastapi.testclient import TestClient
-from config.database import Base, engine, get_db, SessionLocal
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
+from sqlalchemy.pool import StaticPool
+from config.database import Base, get_db
 from models.user import User
 from models.task import Task
 from models.tag import Tag
 from main import app
 
+SQLALCHEMY_DATABASE_URL = "sqlite:///:memory:"
+
+engine = create_engine(
+    SQLALCHEMY_DATABASE_URL,
+    connect_args={"check_same_thread": False},
+    poolclass=StaticPool,
+)
+
+TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+
 @pytest.fixture(scope="function")
 def db():
-    """Sesión de base de datos que se limpia después de cada test"""
     Base.metadata.create_all(bind=engine)
-    db = SessionLocal()
+    
+    db = TestingSessionLocal()
+
     try:
         yield db
     finally:
@@ -20,7 +33,6 @@ def db():
 
 @pytest.fixture(scope="function")
 def client(db):
-    """Cliente de test que usa la sesión de base de datos del fixture"""
     def override_get_db():
         try:
             yield db

@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, status
 from sqlalchemy.orm import Session
 from typing import List
 from config.database import get_db
@@ -7,6 +7,7 @@ from utils.dependencies import get_current_user
 from models.user import User as UserModel
 
 import services.task_service as task_service
+from schemas.pagination import PaginatedResponse
 
 router = APIRouter(prefix='/tasks', tags=['Tasks'])
 
@@ -22,9 +23,9 @@ def get_tasks_summary(db: Session = Depends(get_db), current_user: UserModel = D
 def read_task(task_id: int, db: Session = Depends(get_db), current_user: UserModel = Depends(get_current_user)):
     return task_service.get_task(db=db, task_id=task_id, user_id=current_user.id)
 
-@router.get('/', response_model=List[Task])
+@router.get('/', response_model=PaginatedResponse[Task])
 def read_tasks(skip: int = 0, limit: int = 100, db: Session = Depends(get_db), current_user: UserModel = Depends(get_current_user)):
-    return task_service.get_tasks_by_user(db=db, user_id=current_user.id, skip=skip, limit=limit) 
+    return task_service.get_tasks_by_user(db=db, user_id=current_user.id, skip=skip, limit=limit)
 
 @router.patch('/{task_id}', response_model=Task)
 def update_task(task_id: int, task_update: TaskUpdate, db: Session = Depends(get_db), current_user: UserModel = Depends(get_current_user)):

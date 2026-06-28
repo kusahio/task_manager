@@ -26,12 +26,16 @@ def get_task(db: Session, task_id: int, user_id: int):
     return user_task
 
 def get_tasks_by_user(db: Session, user_id: int, skip: int = 0, limit: int = 100):
-    user_tasks = db.query(TaskModel)\
-        .filter(TaskModel.user_id == user_id)\
-        .offset(skip)\
-        .limit(limit)\
-        .all()
-    return user_tasks
+    query = db.query(TaskModel).filter(TaskModel.user_id == user_id)
+    total = query.count()
+    items = query.offset(skip).limit(limit).all()
+    
+    return {
+        "total": total,
+        "skip": skip,
+        "limit": limit,
+        "data": items
+    }
 
 def update_task(db: Session, task_id: int, task_update: TaskUpdate, user_id: int):
     db_task = get_task(db, task_id, user_id)
