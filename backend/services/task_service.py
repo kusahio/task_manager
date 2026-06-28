@@ -15,8 +15,7 @@ def get_tasks_summary(db: Session, user_id: int):
 
     for task in user_tasks:
         for tag in task.tags:
-            if tag.name in task.tags:
-                tags_count[tag.name] = tags_count.get(tag.name, 0) + 1
+            tags_count[tag.name] = tags_count.get(tag.name, 0) + 1
 
     return {
         'total_completed': completed,

@@ -2,7 +2,7 @@ from sqlalchemy.orm import Session
 from schemas.user import UserCreate
 from utils.security import hash_password
 from utils.errors import AppBaseException, NotFoundException
-from ..repositories import user_repository
+from repositories import user_repository
 
 def create_user(db: Session, user: UserCreate):
     email_exist = user_repository.get_user_by_email(db=db, email=user.email)

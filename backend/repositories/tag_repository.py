@@ -24,7 +24,7 @@ def get_tag(db: Session, tag_id: int, user_id: int):
 
 def get_tag_by_name(db: Session, name: str, user_id: int):
     return db.query(TagModel).filter(
-        TagModel.name == name,
+        TagModel.name.ilike(name),
         TagModel.user_id == user_id
     ).first()
 

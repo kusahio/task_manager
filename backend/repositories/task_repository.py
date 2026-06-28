@@ -1,11 +1,7 @@
-# crud/task.py
 from models.task import Task as TaskModel
 from models.tag import Tag as TagModel
-from config.database import Base, engine
 from sqlalchemy.orm import Session
 from schemas.task import TaskCreate, TaskUpdate
-
-# Base.metadata.create_all(bind=engine)
 
 def create_task(db: Session, task: TaskCreate, user_id: int):
     task_data = task.model_dump()

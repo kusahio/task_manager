@@ -8,7 +8,7 @@ from models.tag import Tag
 from main import app
 
 @pytest.fixture(scope="function")
-def db_session():
+def db():
     """Sesión de base de datos que se limpia después de cada test"""
     Base.metadata.create_all(bind=engine)
     db = SessionLocal()
@@ -16,15 +16,14 @@ def db_session():
         yield db
     finally:
         db.close()
-        # Limpiar todas las tablas
         Base.metadata.drop_all(bind=engine)
 
 @pytest.fixture(scope="function")
-def client(db_session):
+def client(db):
     """Cliente de test que usa la sesión de base de datos del fixture"""
     def override_get_db():
         try:
-            yield db_session
+            yield db
         finally:
             pass
     

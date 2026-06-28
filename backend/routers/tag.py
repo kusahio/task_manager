@@ -1,4 +1,3 @@
-# router/tag.py
 from fastapi import APIRouter, Depends, status
 from sqlalchemy.orm import Session
 from typing import List

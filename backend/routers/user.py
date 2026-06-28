@@ -22,15 +22,15 @@ def create_new_user(user: UserCreate, db: Session = Depends(get_db), secret_chec
     return user_service.create_user(db=db, user=user)
 
 @router.get('/{user_id}', response_model=User)
-def get_user(db: Session = Depends(get_db), user_id: int):
+def get_user(user_id: int, db: Session = Depends(get_db)):
     return user_service.get_user(db=db, user_id=user_id)
 
 @router.get('/email/{email}', response_model=User)
-def get_user_by_email(db: Session = Depends(get_db), email: str):
+def get_user_by_email(email: str, db: Session = Depends(get_db)):
     return user_service.get_user_by_email(db=db, email=email)
 
 @router.get('/', response_model=list[User])
-def get_users(db: Session = Depends(get_db), skip: int = 0, limit: int = 100):
+def get_users(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     return user_service.get_users(db=db, skip=skip, limit=limit)
 
 
