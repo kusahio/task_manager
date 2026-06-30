@@ -5,6 +5,7 @@ from config.database import get_db
 from schemas.user import UserCreate, User, UserLogin
 from services.auth_service import auth_user
 from utils.jwt_manager import create_access_token
+from utils.errors import UnauthorizedException, ForbiddenException
 from config.settings import settings
 
 import services.user_service as user_service
@@ -13,7 +14,7 @@ router = APIRouter(prefix='/users', tags=['Users'])
 
 def verify_signup_secret(x_signup_token: str = Header(None)):
     if x_signup_token != settings.signup_secret_key:
-        raise HTTPException(status_code=403, detail='No tienes permiso para crear usuarios')
+        raise ForbiddenException(message="No tienes permiso para crear usuarios")
     
     return x_signup_token
 
@@ -43,7 +44,7 @@ def login(user_login: UserLogin, db: Session = Depends(get_db)):
     )
     
     if not user:
-        raise HTTPException(status_code=401, detail='Email o Contraseña incorrectos')
+        raise UnauthorizedException(message="Email o Contraseña incorrectos")
     
     access_token = create_access_token(data={'sub' : user.email})
     
@@ -66,10 +67,7 @@ def login_for_access_token(
     user = auth_user(db, email=form_data.username, password=form_data.password)
 
     if not user:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail='Email o password incorrectos',
-            headers={'WWW-Authenticate' : 'Bearer'})
+        raise UnauthorizedException(message="Email o Contraseña incorrectos")
     
     access_token = create_access_token(data={'sub' : user.email})
 
