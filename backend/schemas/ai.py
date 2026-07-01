@@ -3,7 +3,6 @@ from typing import Optional, List
 
 
 class TaskParseResponse(BaseModel):
-    """Esquema estricto para la respuesta de extracción de tareas mediante IA"""
     title: str = Field(
         description=(
             "Título breve y específico que describa la acción principal de la tarea. "
@@ -37,7 +36,6 @@ class TaskParseResponse(BaseModel):
     )
 
 class TaskParseRequest(BaseModel):
-    """Esquema de entrada para el endpoint de parseo con IA"""
     text: str = Field(
         ..., 
         description="Texto libre introducido por el usuario para ser analizado."

@@ -9,11 +9,6 @@ client = genai.Client(api_key=settings.gemini_api_key)
 
 
 def parse_task_with_ai(text: str) -> TaskParseResponse:
-    """
-      Toma un texto en lenguaje natural, le inyecta el contexto temporal actual
-      y utiliza Gemini 1.5 Flash para extraer una estructura estricta de tarea.
-      """
-
     now = datetime.now()
     reference_date = now.strftime("%Y-%m-%d %H:%M:%S")
     day_week = now.strftime("%A")

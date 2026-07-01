@@ -23,10 +23,10 @@ api.interceptors.request.use(async (config) => {
 api.interceptors.response.use(
   (response) => response,
   async (error) => {
-    const isClient = typeof window !== 'undefined';
+    const isClient = globalThis.window !== undefined;
     const isUnauthorized = error.response?.status === 401;
 
-    if (isClient && isUnauthorized && !window.location.pathname.includes('/login')){
+    if (isClient && isUnauthorized && !globalThis.location.pathname.includes('/login')){
       await signOut();
     }
 

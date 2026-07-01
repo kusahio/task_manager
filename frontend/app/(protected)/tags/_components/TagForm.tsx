@@ -34,7 +34,7 @@ export default function TagForm({onSuccess} : TagFormProps){
       reset();
       onSuccess();
     } catch (err) {
-      toast.error('Error al crear crear la etiqueta');
+      toast.error('Error al crear la etiqueta');
     }
   }
 

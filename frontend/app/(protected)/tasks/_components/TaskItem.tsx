@@ -1,7 +1,7 @@
 'use client';
 
 import Button from '@/components/ui/Button';
-import { Task } from '@/services/task';
+import { Task } from '@/types/task'
 
 interface TaskItemProps {
   task: Task;

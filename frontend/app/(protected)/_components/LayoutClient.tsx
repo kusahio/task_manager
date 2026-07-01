@@ -51,7 +51,7 @@ export default function LayoutClient({ children, userEmail} : Props){
       `}>
         <div className='p-6 border-b border-gray-700 flex justify-between items-center'>
           <h2 className='text-2xl font-bold text-blue-400'>Task Manager App</h2>
-          <button onClick={() => setIsSidebarOpen(true)} className='lg:hidden text-gray-400 hover:text-white'>
+          <button onClick={() => setIsSidebarOpen(false)} className='lg:hidden text-gray-400 hover:text-white'>
             <CloseIcon />
           </button>
         </div>

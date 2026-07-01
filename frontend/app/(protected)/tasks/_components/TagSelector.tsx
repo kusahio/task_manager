@@ -1,6 +1,6 @@
 'use client'
 
-import { Tag } from '@/services/tag'
+import { Tag } from '@/types/tag'
 
 interface TagSelectorProps{
   availableTags : Tag[];
@@ -14,7 +14,7 @@ export default function TagSelector({
   onChange
 } : TagSelectorProps) {
 
-  const toogleTag = (id: number) => {
+  const toggleTag = (id: number) => {
     if (selectedTagIds.includes(id)){
       onChange(selectedTagIds.filter(tagId => tagId !== id));
     } else {
@@ -35,7 +35,7 @@ export default function TagSelector({
           <button
             key={tag.id}
             type='button'
-            onClick={() => toogleTag(tag.id)}
+            onClick={() => toggleTag(tag.id)}
             className={`
               px-3 py-1 rounded-full text-xs font-medium transition-all border cursor-pointer
               ${isSelected 

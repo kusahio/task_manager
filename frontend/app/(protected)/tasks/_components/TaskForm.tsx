@@ -4,12 +4,12 @@ import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { toast } from 'sonner';
-import { Tag } from '@/services/tag';
-import { Task, taskService } from '@/services/task';
+import { Tag } from '@/types/tag';
+import { Task } from '@/types/task'
+import { taskService } from '@/services/task';
 import { TaskSchema, taskSchema } from '@/schemas/task';
 import TagSelector from './TagSelector';
 import Button from '@/components/ui/Button';
-import { title } from 'process';
 
 interface TaskFormProps {
   tags: Tag[];
