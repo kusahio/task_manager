@@ -8,6 +8,7 @@ from models.user import User
 from models.task import Task
 from models.tag import Tag
 from main import app
+from utils.jwt_manager import create_access_token
 
 SQLALCHEMY_DATABASE_URL = "sqlite:///:memory:"
 
@@ -42,3 +43,23 @@ def client(db):
     app.dependency_overrides[get_db] = override_get_db
     yield TestClient(app)
     app.dependency_overrides.clear()
+
+@pytest.fixture(scope="function")
+def normal_user(db):
+    """Crea un usuario de prueba en la base de datos en memoria"""
+    user = User(
+        name="Test User",
+        email="testuser@example.com",
+        hashed_password="fakehashedpassword"
+    )
+    db.add(user)
+    db.commit()
+    db.refresh(user)
+    return user
+
+
+@pytest.fixture(scope="function")
+def normal_user_token(normal_user):
+    """Genera un token JWT firmado para el usuario de prueba"""
+    token = create_access_token(data={"sub": normal_user.email})
+    return token
