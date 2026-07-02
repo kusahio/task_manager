@@ -1,12 +1,13 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { toast } from 'sonner';
 import { Tag } from '@/types/tag';
 import { Task } from '@/types/task'
 import { taskService } from '@/services/task';
+import { parseTaskWithAI } from '@/services/ai';
 import { TaskSchema, taskSchema } from '@/schemas/task';
 import TagSelector from './TagSelector';
 import Button from '@/components/ui/Button';
@@ -19,6 +20,10 @@ interface TaskFormProps {
 }
 
 export default function TaskForm({ tags, onSuccess, taskToEdit, onCancel }: TaskFormProps) {
+  
+  const [aiPrompt, setAiPrompt] = useState('');
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
+  
   const {
     register,
     handleSubmit,
@@ -57,6 +62,51 @@ export default function TaskForm({ tags, onSuccess, taskToEdit, onCancel }: Task
 
   const selectedTags = watch('tags') || [];
 
+  const handleAiParse = async () => {
+    if(!aiPrompt.trim()) return;
+    setIsAnalyzing(true);
+
+    try{
+      const parsedData = await parseTaskWithAI(aiPrompt);
+
+      if(parsedData.title.includes('Error:')){
+        toast.warning('La IA indica que el texto no parece una tarea válida.');
+        return;
+      }
+
+      setValue('title', parsedData.title, { shouldValidate: true });
+
+      if(parsedData.description){
+        setValue('description', parsedData.description, { shouldValidate: true });
+      }
+
+      if(parsedData.deadline){
+        const formattedDate = new Date(parsedData.deadline).toISOString().split('T')[0];
+        setValue('deadline', formattedDate, { shouldValidate: true})
+      }
+
+      if(parsedData.tags && parsedData.tags.length > 0){
+        const matchedTagIds = tags
+          .filter(existingTag => 
+            parsedData.tags.some(aiTag => aiTag.toLowerCase() === existingTag.name.toLowerCase())
+          )
+          .map(t => t.id);
+
+          if(matchedTagIds.length > 0){
+            setValue('tags', matchedTagIds, { shouldValidate: true });
+          }
+      }
+
+      toast.success('Formulario autocompletado con éxito')
+      setAiPrompt('');
+    } catch (err){
+      toast.error('Hubo un error al analizar el texto con IA')
+      console.error(err);
+    } finally {
+      setIsAnalyzing(false);
+    }
+  }
+
   const onSubmit = async (data: TaskSchema) => {
     try {
       const payload = {
@@ -84,6 +134,44 @@ export default function TaskForm({ tags, onSuccess, taskToEdit, onCancel }: Task
       <h2 className='text-xl font-bold text-white mb-4 flex intems-center gap-2'>
         {taskToEdit ? 'Editar Tarea' : 'Crear Nueva Tarea'}
       </h2>
+
+      {!taskToEdit && (
+        <div className="mb-6 p-4 bg-gradient-to-br from-blue-900/30 to-purple-900/30 border border-blue-700/50 rounded-xl shadow-inner">
+          <label className="text-xs font-bold text-blue-300 uppercase mb-2 block">
+            Asistente de IA para crear tareas
+          </label>
+          <div className="flex gap-2">
+            <input
+              type="text"
+              value={aiPrompt}
+              onChange={(e) => setAiPrompt(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  e.preventDefault();
+                  handleAiParse();
+                }
+              }}
+              placeholder="Ej: Dentista pasado mañana a las 16hs #salud #urgente"
+              className="flex-1 bg-gray-900/60 text-sm text-white rounded-lg px-3 py-2 border border-blue-800/50 focus:outline-none focus:border-blue-500 transition-colors"
+              disabled={isAnalyzing}
+              autoComplete="off"
+            />
+            <Button
+              type="button"
+              variant="primary"
+              onClick={handleAiParse}
+              isLoading={isAnalyzing}
+              disabled={!aiPrompt.trim()}
+              className="px-4 py-2"
+            >
+              {!isAnalyzing && 'Analizar'}
+            </Button>
+          </div>
+          <p className="text-gray-400 text-[11px] mt-2 leading-tight">
+            Escribe de forma natural y Gemini auto-completará el título, la fecha y las etiquetas por ti.
+          </p>
+        </div>
+      )}
 
       <form onSubmit={handleSubmit(onSubmit)} className='space-y-4'>
         <div>

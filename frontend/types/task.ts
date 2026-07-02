@@ -26,8 +26,7 @@ export interface TaskUpdate {
 
 export interface TaskSummary {
   total: number;
-  completed: number;
-  pending: number;
-  overdue: number;
+  total_completed: number;
+  total_pending: number;
   by_tag: Record<string, number>;
 }
