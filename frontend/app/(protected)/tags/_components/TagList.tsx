@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { tagService } from '@/services/tag';
-import { Tag} from '@/types/tag';
+import { Tag } from '@/types/tag';
 import { toast } from 'sonner';
 
 interface TagListProps{

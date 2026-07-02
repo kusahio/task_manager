@@ -42,12 +42,12 @@ export default async function DashboardPage() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           <div className="bg-gray-800 p-6 rounded-xl border border-gray-700 shadow-lg transform transition hover:scale-105">
             <h3 className="text-gray-400 text-sm uppercase font-semibold">Completadas</h3>
-            <p className="text-4xl font-bold text-green-400 mt-2">{summary.completed}</p>
+            <p className="text-4xl font-bold text-green-400 mt-2">{summary.total_completed}</p>
           </div>
           
           <div className="bg-gray-800 p-6 rounded-xl border border-gray-700 shadow-lg transform transition hover:scale-105">
             <h3 className="text-gray-400 text-sm uppercase font-semibold">Pendientes</h3>
-            <p className="text-4xl font-bold text-yellow-400 mt-2">{summary.pending}</p>
+            <p className="text-4xl font-bold text-yellow-400 mt-2">{summary.total_pending}</p>
           </div>
 
           <div className="bg-gray-800 p-6 rounded-xl border border-gray-700 shadow-lg sm:col-span-2 lg:col-span-1">
