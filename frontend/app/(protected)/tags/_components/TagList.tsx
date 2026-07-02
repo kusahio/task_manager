@@ -1,7 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import { Tag, tagService } from '@/services/tag';
+import { tagService } from '@/services/tag';
+import { Tag } from '@/types/tag';
 import { toast } from 'sonner';
 
 interface TagListProps{
