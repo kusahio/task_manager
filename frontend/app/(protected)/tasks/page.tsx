@@ -2,8 +2,10 @@
 
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
-import { Task, taskService } from '@/services/task';
-import { Tag, tagService } from '@/services/tag';
+import { taskService } from '@/services/task';
+import { Task } from '@/types/task';
+import { tagService } from '@/services/tag';
+import { Tag } from '@/types/tag';
 import TaskList from './_components/TaskList';
 import TaskForm from './_components/TaskForm';
 import Modal from '@/components/ui/Modal';

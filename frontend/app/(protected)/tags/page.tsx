@@ -1,7 +1,8 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Tag, tagService } from '@/services/tag';
+import { tagService } from '@/services/tag';
+import { Tag } from '@/types/tag';
 import { toast } from 'sonner';
 import ConfirmModal from '@/components/ConfirmModal';
 import TagForm from './_components/TagForm';

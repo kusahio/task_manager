@@ -2,7 +2,8 @@
 
 import { useState } from 'react';
 import { toast } from 'sonner';
-import { Task, taskService } from '@/services/task';
+import { taskService } from '@/services/task';
+import { Task } from '@/types/task';
 import TaskItem from './TaskItem';
 import Modal from '@/components/ui/Modal';
 import Button from '@/components/ui/Button';
