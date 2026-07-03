@@ -34,31 +34,6 @@ def get_user_by_email(email: str, db: Session = Depends(get_db)):
 def get_users(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     return user_service.get_users(db=db, skip=skip, limit=limit)
 
-
-@router.post('/login')
-def login(user_login: UserLogin, db: Session = Depends(get_db)):
-    user = auth_user(
-        db=db,
-        email=user_login.email,
-        password=user_login.password
-    )
-    
-    if not user:
-        raise UnauthorizedException(message="Email o Contraseña incorrectos")
-    
-    access_token = create_access_token(data={'sub' : user.email})
-    
-    return {
-        'message' : 'Inicio de sesion exitoso',
-        'access_token' : access_token,
-        'token_type' :  'bearer',
-        'user' : {
-            'id' : user.id,
-            'email' : user.email,
-            'name' : user.name
-        }
-    }
-
 @router.post('/token', response_model=dict)
 def login_for_access_token(
     form_data: OAuth2PasswordRequestForm = Depends(),
@@ -71,4 +46,12 @@ def login_for_access_token(
     
     access_token = create_access_token(data={'sub' : user.email})
 
-    return {'access_token' :  access_token, 'token_type' : 'bearer'}
+    return {
+        'access_token' :  access_token, 
+        'token_type' : 'bearer',
+        'user': {
+            'id' : user.id,
+            'email' : user.email,
+            'name' : user.name
+        }
+    }
