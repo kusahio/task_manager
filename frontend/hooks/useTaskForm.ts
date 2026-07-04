@@ -113,17 +113,8 @@ export function useTaskForm({ tags, onSuccess, taskToEdit, onCancel }: UseTaskFo
   };
 
   return {
-    aiPrompt,
-    setAiPrompt,
-    isAnalyzing,
-    register,
-    handleSubmit: handleSubmit(onSubmit),
-    errors,
-    isSubmitting,
-    selectedTags,
-    setValue,
-    taskToEdit,
-    onCancel,
-    handleAiParse
-  };
+  ai: { prompt: aiPrompt, setPrompt: setAiPrompt, isAnalyzing, handleParse: handleAiParse },
+  form: { register, handleSubmit: handleSubmit(onSubmit), errors, isSubmitting, selectedTags, setValue },
+  meta: { taskToEdit, onCancel },
+};
 }

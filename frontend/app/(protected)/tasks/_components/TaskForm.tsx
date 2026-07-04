@@ -13,23 +13,23 @@ interface TaskFormProps {
   onCancel?: () => void;
 }
 
-export default function TaskForm({ tags, onSuccess, taskToEdit, onCancel }: TaskFormProps) {
-  const { aiPrompt, setAiPrompt, isAnalyzing, register, handleSubmit, errors, isSubmitting, selectedTags, setValue, handleAiParse } = useTaskForm({ tags, onSuccess, taskToEdit, onCancel });
+export default function TaskForm({ tags, onSuccess, taskToEdit, onCancel }: Readonly<TaskFormProps>) {
+  const { ai, form, meta } = useTaskForm({ tags, onSuccess, taskToEdit, onCancel });
 
   let submitButtonLabel = 'Crear Tarea';
-  if (isSubmitting) {
+  if (form.isSubmitting) {
     submitButtonLabel = 'Guardando...';
-  } else if (taskToEdit) {
+  } else if (meta.taskToEdit) {
     submitButtonLabel = 'Guardar Cambios';
   }
 
   return (
-    <div className={`${!taskToEdit ? 'bg-gray-800 p-6 rounded-xl shadow-lg border border-gray-700' : ''} h-fit`}>
-      <h2 className='text-xl font-bold text-white mb-4 flex intems-center gap-2'>
-        {taskToEdit ? 'Editar Tarea' : 'Crear Nueva Tarea'}
+    <div className={`${meta.taskToEdit ? '' : 'bg-gray-800 p-6 rounded-xl shadow-lg border border-gray-700'} h-fit`}>
+      <h2 className='text-xl font-bold text-white mb-4 flex items-center gap-2'>
+        {meta.taskToEdit ? 'Editar Tarea' : 'Crear Nueva Tarea'}
       </h2>
 
-      {!taskToEdit && (
+      {!meta.taskToEdit && (
         <div className="mb-6 p-4 bg-gradient-to-br from-blue-900/30 to-purple-900/30 border border-blue-700/50 rounded-xl shadow-inner">
           <label className="text-xs font-bold text-blue-300 uppercase mb-2 block">
             Asistente de IA para crear tareas
@@ -37,28 +37,28 @@ export default function TaskForm({ tags, onSuccess, taskToEdit, onCancel }: Task
           <div className="flex gap-2">
             <input
               type="text"
-              value={aiPrompt}
-              onChange={(e) => setAiPrompt(e.target.value)}
+              value={ai.prompt}
+              onChange={(e) => ai.setPrompt(e.target.value)}
               onKeyDown={(e) => {
                 if (e.key === 'Enter') {
                   e.preventDefault();
-                  handleAiParse();
+                  ai.handleParse();
                 }
               }}
               placeholder="Ej: Dentista pasado mañana a las 16hs #salud #urgente"
               className="flex-1 bg-gray-900/60 text-sm text-white rounded-lg px-3 py-2 border border-blue-800/50 focus:outline-none focus:border-blue-500 transition-colors"
-              disabled={isAnalyzing}
+              disabled={ai.isAnalyzing}
               autoComplete="off"
             />
             <Button
               type="button"
               variant="primary"
-              onClick={handleAiParse}
-              isLoading={isAnalyzing}
-              disabled={!aiPrompt.trim()}
+              onClick={ai.handleParse}
+              isLoading={ai.isAnalyzing}
+              disabled={!ai.prompt.trim()}
               className="px-4 py-2"
             >
-              {!isAnalyzing && 'Analizar'}
+              {!ai.isAnalyzing && 'Analizar'}
             </Button>
           </div>
           <p className="text-gray-400 text-[11px] mt-2 leading-tight">
@@ -67,20 +67,20 @@ export default function TaskForm({ tags, onSuccess, taskToEdit, onCancel }: Task
         </div>
       )}
 
-      <form onSubmit={handleSubmit} className='space-y-4'>
+      <form onSubmit={form.handleSubmit} className='space-y-4'>
         <div>
           <input
-            {...register('title')}
+            {...form.register('title')}
             placeholder='¿Qué necesitas hacer?'
             className='w-full bg-transparent text-lg font-medium text-white placeholder-gray-500
             focus:outline-none border-b border-gray-600 focus:border-blue-500 pb-2 transition-colors'
             autoComplete='off'
           />
-          {errors.title && <span className='text-red-400 text-xs mt-1 block'>{errors.title.message}</span>}
+          {form.errors.title && <span className='text-red-400 text-xs mt-1 block'>{form.errors.title.message}</span>}
         </div>
         <div>
           <textarea
-            {...register('description')}
+            {...form.register('description')}
             placeholder='Detalles de la tarea (opcional)'
             rows={3}
             className='w-full bg-gray-900/50 text-sm text-gray-300 rounded-lg p-3 focus:outline-none focus:ring-1
@@ -88,12 +88,10 @@ export default function TaskForm({ tags, onSuccess, taskToEdit, onCancel }: Task
           />
         </div>
         <div className='flex flex-col gap-1'>
-          <label className='text-xs uppercase font-bold text-gray-500'>
-            Fecha Límite
-          </label>
+          <label className='text-xs uppercase font-bold text-gray-500'>Fecha Límite</label>
           <input
             type='date'
-            {...register('deadline')}
+            {...form.register('deadline')}
             className='bg-gray-700 text-white text-sm rounded-lg px-3 py-2 outline-none focus:ring-1
             focus:ring-blue-500 w-full cursor-pointer'
           />
@@ -102,26 +100,21 @@ export default function TaskForm({ tags, onSuccess, taskToEdit, onCancel }: Task
           <label className='text-xs uppercase font-bold text-gray-500'>Etiquetas</label>
           <TagSelector
             availableTags={tags}
-            selectedTagIds={selectedTags}
-            onChange={(newTags) => setValue('tags', newTags)}
+            selectedTagIds={form.selectedTags}
+            onChange={(newTags) => form.setValue('tags', newTags)}
           />
         </div>
         <div className='flex gap-3 pt-2'>
-          {taskToEdit && onCancel && (
-            <Button
-              type='button'
-              variant='ghost'
-              onClick={onCancel}
-              className='flex-1'
-            >
+          {meta.taskToEdit && meta.onCancel && (
+            <Button type='button' variant='ghost' onClick={meta.onCancel} className='flex-1'>
               Cancelar
             </Button>
           )}
           <Button
             type='submit'
             variant='primary'
-            isLoading={isSubmitting}
-            className={taskToEdit ? 'flex-1' : 'w-full'}
+            isLoading={form.isSubmitting}
+            className={meta.taskToEdit ? 'flex-1' : 'w-full'}
           >
             {submitButtonLabel}
           </Button>
