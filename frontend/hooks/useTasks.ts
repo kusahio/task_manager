@@ -22,8 +22,8 @@ export function useTasks() {
       ]);
       setTasks(taskData);
       setTags(tagsData);
-    } catch (err: any) {
-      toast.error(`Hubo un error al cargar los datos | ${err}`);
+    } catch {
+      toast.error('Hubo un error al cargar los datos');
     } finally {
       setLoading(false);
     }

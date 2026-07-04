@@ -15,8 +15,8 @@ export function useTags() {
     try {
       const data = await tagService.getAll();
       setTags(data);
-    } catch (err: any) {
-      toast.error(err?.toString() || 'Error al cargar etiquetas');
+    } catch {
+      toast.error('Error al cargar etiquetas');
     } finally {
       setLoading(false);
     }

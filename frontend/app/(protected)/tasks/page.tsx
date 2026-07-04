@@ -8,18 +8,19 @@ import TaskList from './_components/TaskList';
 import TaskForm from './_components/TaskForm';
 import Modal from '@/components/ui/Modal';
 import ConfirmModal from '@/components/ConfirmModal';
+import { Task } from '@/types/task';
 
 export default function TaskPage() {
   const { tasks, tags, loading, editingTask, setEditingTask, loadData } = useTasks();
   const { taskToDelete, setTaskToDelete, isDeleting, confirmDelete } = useTaskDelete(loadData);
 
-  const handleToggle = async (task: any) => {
+  const handleToggle = async (task: Task) => {
     try {
       await taskService.toggleComplete(task.id, task.completed);
       loadData();
       toast.success(task.completed ? 'La tarea ha vuelto a estar pendiente' : '¡Tarea marcada como completada!');
-    } catch (err: any) {
-      toast.error(`Hubo un error al actualizar la tarea | ${err}`);
+    } catch {
+      toast.error('Hubo un error al actualizar la tarea');
     }
   };
 

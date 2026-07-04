@@ -106,9 +106,10 @@ export function useTaskForm({ tags, onSuccess, taskToEdit, onCancel }: UseTaskFo
         reset();
       }
       onSuccess();
-    } catch (err: any) {
-      toast.error(err?.toString() || 'Hubo un error al crear/actualizar la tarea');
+    } catch {
+      toast.error('Hubo un error al crear o actualizar la tarea');
     }
+
   };
 
   return {
