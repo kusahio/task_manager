@@ -1,14 +1,15 @@
 'use client'
 
+import { memo } from 'react';
 import { Tag } from '@/types/tag'
 
 interface TagSelectorProps{
-  availableTags : Tag[];
-  selectedTagIds: number[];
-  onChange: (ids: number[]) => void
+  readonly availableTags : Tag[];
+  readonly selectedTagIds: number[];
+  readonly onChange: (ids: number[]) => void
 }
 
-export default function TagSelector({
+function TagSelector({
   availableTags,
   selectedTagIds,
   onChange
@@ -56,3 +57,5 @@ export default function TagSelector({
     </div>
   )
 }
+
+export default memo(TagSelector);

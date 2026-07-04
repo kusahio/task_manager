@@ -1,5 +1,6 @@
 'use client';
 
+import { memo } from 'react';
 import { Task } from '@/types/task';
 import TaskItem from './TaskItem';
 
@@ -10,7 +11,7 @@ interface TaskListProps {
   readonly onEditTask: (task: Task) => void;
 }
 
-export default function TaskList({ tasks, onToggle, onDeleteRequest, onEditTask }: TaskListProps) {
+function TaskList({ tasks, onToggle, onDeleteRequest, onEditTask }: TaskListProps) {
   if (tasks.length === 0) {
     return (
       <div className='text-center py-10 text-gray-500 bg-gray-800/50 rounded-xl border border-dashed border-gray-700'>
@@ -33,3 +34,5 @@ export default function TaskList({ tasks, onToggle, onDeleteRequest, onEditTask 
     </div>
   );
 }
+
+export default memo(TaskList);

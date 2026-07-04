@@ -1,5 +1,6 @@
 'use client';
 
+import { memo } from 'react';
 import { useTagEdit } from '@/hooks/useTagEdit';
 import { Tag } from '@/types/tag';
 
@@ -9,8 +10,14 @@ interface TagListProps {
   readonly onRefresh: () => void;
 }
 
-export default function TagList({ tags, onDelete, onRefresh }: TagListProps) {
-  const { editingId, editName, editColor, setEditName, setEditColor, startEditing, cancelEditing, handleSave, handleKeyDown } = useTagEdit(onRefresh);
+function TagList({ tags, onDelete, onRefresh }: TagListProps) {
+  const { 
+    editingId, editName, 
+    editColor, setEditName, 
+    setEditColor, startEditing, 
+    cancelEditing, handleSave, 
+    handleKeyDown 
+  } = useTagEdit(onRefresh);
 
   return (
     <div className='bg-gray-800 p-6 rounded-xl shadow-lg'>
@@ -90,3 +97,5 @@ export default function TagList({ tags, onDelete, onRefresh }: TagListProps) {
     </div>
   );
 }
+
+export default memo(TagList);

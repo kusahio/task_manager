@@ -1,18 +1,20 @@
 'use client';
 
+import { memo } from 'react';
+
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement>{
-  isLoading?: boolean;
-  variant?: 'primary' | 'danger' | 'secondary' | 'ghost';
+  readonly isLoading?: boolean;
+  readonly variant?: 'primary' | 'danger' | 'secondary' | 'ghost';
 }
 
-export default function Button({
+function Button({
   children,
   isLoading,
   variant = 'primary',
   className = '',
   disabled,
   ...props
-} : ButtonProps) {
+} : Readonly<ButtonProps>) {
   const baseStyles = 'cursor-pointer px-4 py-2 rounded-lg font-bold text-sm transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed';
   const variants = {
     primary: 'bg-blue-600 hover:bg-blue-500 text-white shadow-lg shadow-blue-900/20',
@@ -37,3 +39,5 @@ export default function Button({
     </button>
   )
 }
+
+export default memo(Button);

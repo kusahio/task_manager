@@ -1,5 +1,6 @@
 'use client';
 
+import { memo } from 'react';
 import Button from '@/components/ui/Button';
 import { Task } from '@/types/task'
 import { formatDateToDisplay } from '@/utils/date';
@@ -11,7 +12,7 @@ interface TaskItemProps {
   readonly onEdit: (task: Task) => void;
 }
 
-export default function TaskItem({ task, onToggle, onDelete, onEdit }: TaskItemProps) {
+function TaskItem({ task, onToggle, onDelete, onEdit }: TaskItemProps) {
 
   return (
     <div className={`group flex items-start gap-3 md:gap-4 p-3 md:p-4 rounded-xl border transition-all duration-200
@@ -86,3 +87,5 @@ export default function TaskItem({ task, onToggle, onDelete, onEdit }: TaskItemP
     </div>
   );
 }
+
+export default memo(TaskItem);
