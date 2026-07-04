@@ -1,6 +1,8 @@
 'use client';
 
+import { useState } from 'react';
 import { useTasks } from '@/hooks/useTasks';
+import { useTags } from '@/hooks/useTags';
 import { useTaskDelete } from '@/hooks/useTaskDelete';
 import { taskService } from '@/services/task';
 import { toast } from 'sonner';
@@ -8,11 +10,13 @@ import TaskList from './_components/TaskList';
 import TaskForm from './_components/TaskForm';
 import Modal from '@/components/ui/Modal';
 import ConfirmModal from '@/components/ConfirmModal';
-import { Task } from '@/types/task';
 import Spinner from '@/components/ui/Spinner';
+import { Task } from '@/types/task';
 
 export default function TaskPage() {
-  const { tasks, tags, loading, editingTask, setEditingTask, loadData } = useTasks();
+  const { tasks, loading, loadData } = useTasks();
+  const { tags } = useTags();
+  const [editingTask, setEditingTask] = useState<Task | null>(null);
   const { taskToDelete, setTaskToDelete, isDeleting, confirmDelete } = useTaskDelete(loadData);
 
   const handleToggle = async (task: Task) => {
@@ -35,8 +39,6 @@ export default function TaskPage() {
         <div className='flex justify-center py-20'>
           <Spinner />
         </div>
-
-
       ) : (
         <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8 items-start'>
           <div className='lg:col-span-1'>
@@ -46,7 +48,7 @@ export default function TaskPage() {
           </div>
 
           <div className='lg:col-span-2'>
-            <div className='bg-gray-800/30 rounded-xl p-4 md:p-6 border border-gray-700/50 min-h-[300px] md:min-h-[500px]'>
+            <div className='bg-gray-800/30 rounded-xl p-4 md:p-6 border border-gray-700/50 min-h-75 md:min-h-125'>
               <div className='flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6'>
                 <h2 className='text-xl font-bold text-white'>Pendientes</h2>
                 <span className='bg-blue-900/50 text-blue-200 text-xs px-3 py-1 rounded-full border border-blue-800'>
