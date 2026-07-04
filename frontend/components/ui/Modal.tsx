@@ -2,19 +2,19 @@
 
 import { useEffect, memo } from 'react';
 
-interface ModalProps{
+interface ModalProps {
   isOpen: boolean;
   onClose: () => void;
   title?: string;
   children: React.ReactNode;
 }
-function Modal({ isOpen, onClose, title, children } : ModalProps){
+function Modal({ isOpen, onClose, title, children }: ModalProps) {
   useEffect(() => {
     const handleEsc = (e: KeyboardEvent) => {
       if (e.key === 'Escape') onClose();
     }
 
-    if (isOpen){
+    if (isOpen) {
       window.addEventListener('keydown', handleEsc)
     }
 
