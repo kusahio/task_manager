@@ -5,6 +5,9 @@ import { Tag } from '@/types/tag';
 import { Task } from '@/types/task';
 import TagSelector from './TagSelector';
 import Button from '@/components/ui/Button';
+import AIChatPanel from '@/components/AIChat/AIChatPanel';
+import AIChatButton from '@/components/AIChat/AIChatButton';
+import { useAIChat } from '@/hooks/useAIChat';
 
 interface TaskFormProps {
   tags: Tag[];
@@ -15,6 +18,7 @@ interface TaskFormProps {
 
 export default function TaskForm({ tags, onSuccess, taskToEdit, onCancel }: Readonly<TaskFormProps>) {
   const { ai, form, meta } = useTaskForm({ tags, onSuccess, taskToEdit, onCancel });
+  const chat = useAIChat();
 
   let submitButtonLabel = 'Crear Tarea';
   if (form.isSubmitting) {
@@ -30,41 +34,17 @@ export default function TaskForm({ tags, onSuccess, taskToEdit, onCancel }: Read
       </h2>
 
       {!meta.taskToEdit && (
-        <div className="mb-6 p-4 bg-gradient-to-br from-blue-900/30 to-purple-900/30 border border-blue-700/50 rounded-xl shadow-inner">
-          <label className="text-xs font-bold text-blue-300 uppercase mb-2 block">
-            Asistente de IA para crear tareas
-          </label>
-          <div className="flex gap-2">
-            <input
-              type="text"
-              value={ai.prompt}
-              onChange={(e) => ai.setPrompt(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter') {
-                  e.preventDefault();
-                  ai.handleParse();
-                }
-              }}
-              placeholder="Ej: Dentista pasado mañana a las 16hs #salud #urgente"
-              className="flex-1 bg-gray-900/60 text-sm text-white rounded-lg px-3 py-2 border border-blue-800/50 focus:outline-none focus:border-blue-500 transition-colors"
-              disabled={ai.isAnalyzing}
-              autoComplete="off"
-            />
-            <Button
-              type="button"
-              variant="primary"
-              onClick={ai.handleParse}
-              isLoading={ai.isAnalyzing}
-              disabled={!ai.prompt.trim()}
-              className="px-4 py-2"
-            >
-              {!ai.isAnalyzing && 'Analizar'}
-            </Button>
-          </div>
-          <p className="text-gray-400 text-[11px] mt-2 leading-tight">
-            Escribe de forma natural y Gemini auto-completará el título, la fecha y las etiquetas por ti.
-          </p>
-        </div>
+        <>
+          <AIChatButton onClick={chat.toggle} />
+          <AIChatPanel
+            isOpen={chat.isOpen}
+            messages={chat.messages}
+            isProcessing={chat.isProcessing}
+            onClose={chat.close}
+            onSend={(text) => chat.sendMessage(text, ai.chatParse)}
+            onClear={chat.clear}
+          />
+        </>
       )}
 
       <form onSubmit={form.handleSubmit} className='space-y-4'>

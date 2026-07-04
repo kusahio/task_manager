@@ -112,9 +112,45 @@ export function useTaskForm({ tags, onSuccess, taskToEdit, onCancel }: UseTaskFo
 
   };
 
+  const handleChatParse = async (text: string): Promise<string> => {
+    const parsedData = await parseTaskWithAI(text);
+
+    if (parsedData.title.includes('Error:')) {
+      return 'La IA indica que el texto no parece una tarea válida. Intenta con una descripción más clara.';
+    }
+
+    setValue('title', parsedData.title, { shouldValidate: true });
+
+    if (parsedData.description) {
+      setValue('description', parsedData.description, { shouldValidate: true });
+    }
+
+    if (parsedData.deadline) {
+      setValue('deadline', formatDateForInput(parsedData.deadline), { shouldValidate: true });
+    }
+
+    if (parsedData.tags && parsedData.tags.length > 0) {
+      const matchedTagIds = matchTagsFromAI(parsedData.tags, tags);
+      if (matchedTagIds.length > 0) {
+        setValue('tags', matchedTagIds, { shouldValidate: true });
+      }
+    }
+
+    setAiPrompt('');
+
+    const parts: string[] = [`✅ Tarea analizada:\n📌 **${parsedData.title}**`];
+    if (parsedData.description) parts.push(`📝 ${parsedData.description}`);
+    if (parsedData.deadline) parts.push(`📅 ${formatDateForInput(parsedData.deadline)}`);
+    if (parsedData.tags?.length) parts.push(`🏷 #${parsedData.tags.join(', #')}`);
+
+    return parts.join('\n');
+  };
+
   return {
-  ai: { prompt: aiPrompt, setPrompt: setAiPrompt, isAnalyzing, handleParse: handleAiParse },
-  form: { register, handleSubmit: handleSubmit(onSubmit), errors, isSubmitting, selectedTags, setValue },
-  meta: { taskToEdit, onCancel },
-};
+    ai: { prompt: aiPrompt, setPrompt: setAiPrompt, isAnalyzing, handleParse: handleAiParse, chatParse: handleChatParse },
+    form: { register, handleSubmit: handleSubmit(onSubmit), errors, isSubmitting, selectedTags, setValue },
+    meta: { taskToEdit, onCancel },
+  };
+
+
 }
