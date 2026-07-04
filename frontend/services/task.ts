@@ -1,4 +1,5 @@
-import api, { baseURL } from "@/utils/api";
+import api from "@/utils/api";
+import { baseURL } from "@/constants/index";
 import { Task, TaskCreate, TaskSummary, TaskUpdate } from "@/types/task";
 import { PaginatedResponse } from "@/types/api";
 

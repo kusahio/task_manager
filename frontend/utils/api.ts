@@ -1,7 +1,6 @@
 import axios from 'axios';
 import { getSession, signOut } from 'next-auth/react';
-
-export const baseURL = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://127.0.0.1:8000/api/v1';
+import { baseURL } from '@/constants/index';
 
 const api = axios.create({
   baseURL,

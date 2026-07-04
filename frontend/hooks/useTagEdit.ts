@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { toast } from 'sonner';
 import { tagService } from '@/services/tag';
 import { Tag } from '@/types/tag';
+import { DEFAULT_TAG_COLOR } from '@/constants/index';
 
 export function useTagEdit(onRefresh: () => void) {
   const [editingId, setEditingId] = useState<number | null>(null);
@@ -13,7 +14,7 @@ export function useTagEdit(onRefresh: () => void) {
   const startEditing = (tag: Tag) => {
     setEditingId(tag.id);
     setEditName(tag.name);
-    setEditColor(tag.color || '#3B82F6');
+    setEditColor(tag.color || DEFAULT_TAG_COLOR);
   };
 
   const cancelEditing = () => {

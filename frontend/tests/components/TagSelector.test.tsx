@@ -25,7 +25,7 @@ describe('TagSelector', () => {
   it('calls onChange without removed tag id when selected tag is clicked', () => {
     const onChange = vi.fn();
     render(<TagSelector availableTags={mockTags} selectedTagIds={[1]} onChange={onChange} />);
-    fireEvent.click(screen.getByText('Salud'));
+    fireEvent.click(screen.getByRole('button', { name: /salud/i }));
     expect(onChange).toHaveBeenCalledWith([]);
   });
 });

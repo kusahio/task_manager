@@ -2,6 +2,7 @@
 
 import { memo } from 'react';
 import { Tag } from '@/types/tag'
+import { DEFAULT_TAG_COLOR } from '@/constants/index';
 
 interface TagSelectorProps{
   readonly availableTags : Tag[];
@@ -45,7 +46,7 @@ function TagSelector({
               }
             `}
             style={{
-              backgroundColor: isSelected ? tag.color || '#3b82f6' : undefined,
+              backgroundColor: isSelected ? tag.color || DEFAULT_TAG_COLOR : undefined,
               borderColor: isSelected ? 'transparent' : tag.color || '#4b5563',
               color: isSelected ? '#fff' : undefined
             }}

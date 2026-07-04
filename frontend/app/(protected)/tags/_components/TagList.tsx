@@ -3,6 +3,7 @@
 import { memo } from 'react';
 import { useTagEdit } from '@/hooks/useTagEdit';
 import { Tag } from '@/types/tag';
+import { DEFAULT_TAG_COLOR } from '@/constants';
 
 interface TagListProps {
   readonly tags: Tag[];
@@ -51,7 +52,7 @@ function TagList({ tags, onDelete, onRefresh }: TagListProps) {
                     </>
                   ) : (
                     <>
-                      <span className='w-4 h-4 rounded-full shadow-sm ring-1 ring-white/10' style={{ backgroundColor: tag.color || '#ccc' }}></span>
+                      <span className='w-4 h-4 rounded-full shadow-sm ring-1 ring-white/10' style={{ backgroundColor: tag.color || DEFAULT_TAG_COLOR }}></span>
                       <span className='text-white font-medium'>{tag.name}</span>
                     </>
                   )}
