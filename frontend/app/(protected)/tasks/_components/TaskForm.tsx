@@ -1,14 +1,8 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { toast } from 'sonner';
+import { useTaskForm } from '@/hooks/useTaskForm';
 import { Tag } from '@/types/tag';
-import { Task } from '@/types/task'
-import { taskService } from '@/services/task';
-import { parseTaskWithAI } from '@/services/ai';
-import { TaskSchema, taskSchema } from '@/schemas/task';
+import { Task } from '@/types/task';
 import TagSelector from './TagSelector';
 import Button from '@/components/ui/Button';
 
@@ -20,115 +14,15 @@ interface TaskFormProps {
 }
 
 export default function TaskForm({ tags, onSuccess, taskToEdit, onCancel }: TaskFormProps) {
-  
-  const [aiPrompt, setAiPrompt] = useState('');
-  const [isAnalyzing, setIsAnalyzing] = useState(false);
-  
-  const {
-    register,
-    handleSubmit,
-    setValue,
-    watch,
-    reset,
-    formState: { errors, isSubmitting }
-  } = useForm<TaskSchema>({
-    resolver: zodResolver(taskSchema),
-    defaultValues: {
-      title: '',
-      description: '',
-      tags: [],
-      deadline: ''
-    }
-  })
+  const { aiPrompt, setAiPrompt, isAnalyzing, register, handleSubmit, errors, isSubmitting, selectedTags, setValue, handleAiParse } = useTaskForm({ tags, onSuccess, taskToEdit, onCancel });
 
-  useEffect(() => {
-    if (taskToEdit) {
-      const formatedDate = taskToEdit.deadline
-        ? new Date(taskToEdit.deadline).toISOString().split('T')[0]
-        : ''
-
-      reset({
-        title: taskToEdit.title,
-        description: taskToEdit.description,
-        deadline: formatedDate,
-        tags: taskToEdit?.tags.map(tag => tag.id)
-      });
-    } else {
-      reset({ title: '', description: '', deadline: '', tags: [] });
-    }
-
-
-  }, [taskToEdit, reset])
-
-  const selectedTags = watch('tags') || [];
-
-  const handleAiParse = async () => {
-    if(!aiPrompt.trim()) return;
-    setIsAnalyzing(true);
-
-    try{
-      const parsedData = await parseTaskWithAI(aiPrompt);
-
-      if(parsedData.title.includes('Error:')){
-        toast.warning('La IA indica que el texto no parece una tarea válida.');
-        return;
-      }
-
-      setValue('title', parsedData.title, { shouldValidate: true });
-
-      if(parsedData.description){
-        setValue('description', parsedData.description, { shouldValidate: true });
-      }
-
-      if(parsedData.deadline){
-        const formattedDate = new Date(parsedData.deadline).toISOString().split('T')[0];
-        setValue('deadline', formattedDate, { shouldValidate: true})
-      }
-
-      if(parsedData.tags && parsedData.tags.length > 0){
-        const matchedTagIds = tags
-          .filter(existingTag => 
-            parsedData.tags.some(aiTag => aiTag.toLowerCase() === existingTag.name.toLowerCase())
-          )
-          .map(t => t.id);
-
-          if(matchedTagIds.length > 0){
-            setValue('tags', matchedTagIds, { shouldValidate: true });
-          }
-      }
-
-      toast.success('Formulario autocompletado con éxito')
-      setAiPrompt('');
-    } catch (err){
-      toast.error('Hubo un error al analizar el texto con IA')
-      console.error(err);
-    } finally {
-      setIsAnalyzing(false);
-    }
+  let submitButtonLabel = 'Crear Tarea';
+  if (isSubmitting) {
+    submitButtonLabel = 'Guardando...';
+  } else if (taskToEdit) {
+    submitButtonLabel = 'Guardar Cambios';
   }
 
-  const onSubmit = async (data: TaskSchema) => {
-    try {
-      const payload = {
-        title: data.title,
-        description: data.description || undefined,
-        tags: data.tags,
-        deadline: data.deadline ? new Date(data.deadline).toISOString() : null
-      };
-
-      if (taskToEdit) {
-        await taskService.update(taskToEdit.id, payload);
-        toast.success('La tarea se ha actualizado')
-      } else {
-        await taskService.create(payload)
-        toast.success('Tarea creada exitosamente');
-        reset();
-      }
-      onSuccess();
-    } catch (err: any) {
-      toast.error(err.toString() || 'Hubo un error al crear/actualizar la tarea');
-    }
-  }
   return (
     <div className={`${!taskToEdit ? 'bg-gray-800 p-6 rounded-xl shadow-lg border border-gray-700' : ''} h-fit`}>
       <h2 className='text-xl font-bold text-white mb-4 flex intems-center gap-2'>
@@ -173,7 +67,7 @@ export default function TaskForm({ tags, onSuccess, taskToEdit, onCancel }: Task
         </div>
       )}
 
-      <form onSubmit={handleSubmit(onSubmit)} className='space-y-4'>
+      <form onSubmit={handleSubmit} className='space-y-4'>
         <div>
           <input
             {...register('title')}
@@ -229,10 +123,10 @@ export default function TaskForm({ tags, onSuccess, taskToEdit, onCancel }: Task
             isLoading={isSubmitting}
             className={taskToEdit ? 'flex-1' : 'w-full'}
           >
-            {isSubmitting ? 'Guardando...' : (taskToEdit ? 'Guardar Cambios' : 'Crear Tarea')}
+            {submitButtonLabel}
           </Button>
         </div>
       </form>
     </div>
-  )
+  );
 }

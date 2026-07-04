@@ -1,50 +1,25 @@
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/app/api/auth/[...nextauth]/route';
+import { taskService, SESSION_EXPIRED } from '@/services/task';
 import SessionExpired from '@/components/SessionExpired';
-import { TaskSummary } from '@/types/task';
-
-async function getDashboardData(token: string): Promise<TaskSummary | null | 'EXPIRED'>{
-  try{
-    const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/tasks/summary`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-      cache: "no-store",
-    });
-
-    if(response.status == 401) return 'EXPIRED'
-
-    if (!response.ok) return null;
-    return await response.json();
-  } catch (error) {
-    console.error("Error cargando dashboard:", error);
-    return null;
-  }
-}
 
 export default async function DashboardPage() {
   const session = await getServerSession(authOptions);
-  const summary = await getDashboardData(session?.user.accessToken as string);
+  const summary = await taskService.getSummaryWithToken(session?.user.accessToken as string);
 
-  if (summary === "EXPIRED") {
-    return <SessionExpired />
-  }
+  if (summary === SESSION_EXPIRED) return <SessionExpired />;
 
   return (
     <div className='max-w-5xl mx-auto'>
       <h1 className="text-2xl md:text-3xl font-bold mb-6 md:mb-8">Resumen de Actividad</h1>
-      
-      {!summary ? (
-        <div className="p-4 bg-yellow-900/50 border border-yellow-700 rounded text-yellow-200">
-          No hay datos disponibles. ¿Ya creaste tareas?
-        </div>
-      ) : (
+
+      {summary ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           <div className="bg-gray-800 p-6 rounded-xl border border-gray-700 shadow-lg transform transition hover:scale-105">
             <h3 className="text-gray-400 text-sm uppercase font-semibold">Completadas</h3>
             <p className="text-4xl font-bold text-green-400 mt-2">{summary.total_completed}</p>
           </div>
-          
+
           <div className="bg-gray-800 p-6 rounded-xl border border-gray-700 shadow-lg transform transition hover:scale-105">
             <h3 className="text-gray-400 text-sm uppercase font-semibold">Pendientes</h3>
             <p className="text-4xl font-bold text-yellow-400 mt-2">{summary.total_pending}</p>
@@ -61,6 +36,10 @@ export default async function DashboardPage() {
               ))}
             </ul>
           </div>
+        </div>
+      ) : (
+        <div className="p-4 bg-yellow-900/50 border border-yellow-700 rounded text-yellow-200">
+          No hay datos disponibles. ¿Ya creaste tareas?
         </div>
       )}
     </div>

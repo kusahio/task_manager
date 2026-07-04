@@ -1,41 +1,27 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { toast } from 'sonner';
+import { useTasks } from '@/hooks/useTasks';
+import { useTaskDelete } from '@/hooks/useTaskDelete';
 import { taskService } from '@/services/task';
-import { Task } from '@/types/task';
-import { tagService } from '@/services/tag';
-import { Tag } from '@/types/tag';
+import { toast } from 'sonner';
 import TaskList from './_components/TaskList';
 import TaskForm from './_components/TaskForm';
 import Modal from '@/components/ui/Modal';
+import ConfirmModal from '@/components/ConfirmModal';
 
 export default function TaskPage() {
-  const [tasks, setTasks] = useState<Task[]>([]);
-  const [tags, setTags] = useState<Tag[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { tasks, tags, loading, editingTask, setEditingTask, loadData } = useTasks();
+  const { taskToDelete, setTaskToDelete, isDeleting, confirmDelete } = useTaskDelete(loadData);
 
-  const [editingTask, setEditingTask] = useState<Task | null>(null);
-
-  const loadData = async () => {
+  const handleToggle = async (task: any) => {
     try {
-      const [taskData, tagsData] = await Promise.all([
-        taskService.getAll(),
-        tagService.getAll()
-      ]);
-
-      setTasks(taskData);
-      setTags(tagsData);
+      await taskService.toggleComplete(task.id, task.completed);
+      loadData();
+      toast.success(task.completed ? 'La tarea ha vuelto a estar pendiente' : '¡Tarea marcada como completada!');
     } catch (err: any) {
-      toast.error(`Hubo un error al cargar los datos | ${err}`);
-    } finally {
-      setLoading(false);
+      toast.error(`Hubo un error al actualizar la tarea | ${err}`);
     }
   };
-
-  useEffect(() => {
-    loadData();
-  }, []);
 
   return (
     <div className='max-w-5xl mx-auto'>
@@ -51,10 +37,7 @@ export default function TaskPage() {
         <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8 items-start'>
           <div className='lg:col-span-1'>
             <div className='lg:col-span-1 md:sticky lg:sticky top-6 z-10'>
-              <TaskForm
-                tags={tags}
-                onSuccess={loadData}
-              />
+              <TaskForm tags={tags} onSuccess={loadData} />
             </div>
           </div>
 
@@ -69,28 +52,32 @@ export default function TaskPage() {
 
               <TaskList
                 tasks={tasks}
-                onTaskUpdate={loadData}
+                onToggle={handleToggle}
+                onDeleteRequest={(id) => setTaskToDelete(id)}
                 onEditTask={(task) => setEditingTask(task)}
               />
             </div>
           </div>
         </div>
       )}
-      <Modal
-        isOpen={editingTask !== null}
-        onClose={() => setEditingTask(null)}
-        title=""
-      >
+
+      <Modal isOpen={editingTask !== null} onClose={() => setEditingTask(null)} title="">
         <TaskForm
           tags={tags}
           taskToEdit={editingTask}
-          onSuccess={() => {
-            loadData();
-            setEditingTask(null);
-          }}
+          onSuccess={() => { loadData(); setEditingTask(null); }}
           onCancel={() => setEditingTask(null)}
         />
       </Modal>
+
+      <ConfirmModal
+        isOpen={taskToDelete !== null}
+        onClose={() => setTaskToDelete(null)}
+        onConfirm={confirmDelete}
+        title="¿Eliminar Tarea?"
+        message="Esta acción no se puede deshacer. ¿Estás seguro?"
+        isLoading={isDeleting}
+      />
     </div>
   );
 }

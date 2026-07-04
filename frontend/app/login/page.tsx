@@ -1,50 +1,11 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { useSession, signIn } from 'next-auth/react';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { loginSchema, LoginSchemaType } from '@/schemas/auth';
+import { useLogin } from '@/hooks/useLogin';
 import Link from 'next/link';
 import Button from '@/components/ui/Button';
 
 export default function LoginPage() {
-  const [globalError, setGlobalError] = useState('');
-  const router = useRouter();
-  const { status } = useSession();
-
-  const {
-    register,
-    handleSubmit,
-    formState: { errors, isSubmitting }
-  } = useForm<LoginSchemaType>({
-    resolver: zodResolver(loginSchema),
-  });
-
-  const onSubmit = async (data: LoginSchemaType) => {
-    setGlobalError('');
-
-    const result = await signIn('credentials', {
-      redirect: false,
-      email: data.email,
-      password: data.password
-    });
-
-    if (result?.error){
-      setGlobalError(result.error);
-    } else {
-      console.log('Login exitoso');
-      router.push('/dashboard');
-      router.refresh();
-    }
-  };
-
-  useEffect(() => {
-    if (status === 'authenticated'){
-      router.replace('/dashboard');
-    }
-  }, [status, router]);
+  const { globalError, register, errors, isSubmitting, submitHandler, status } = useLogin();
 
   if (status === 'loading' || status === 'authenticated') {
     return (
@@ -70,15 +31,15 @@ export default function LoginPage() {
           </div>
         )}
 
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+        <form onSubmit={submitHandler} className="space-y-5">
           <div>
             <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Email</label>
             <input
               {...register('email')}
               type="email"
               className={`w-full px-4 py-3 bg-gray-800/50 border rounded-xl focus:outline-none text-white transition-all
-                ${errors.email 
-                  ? 'border-red-500 focus:ring-1 focus:ring-red-500' 
+                ${errors.email
+                  ? 'border-red-500 focus:ring-1 focus:ring-red-500'
                   : 'border-gray-700 focus:border-blue-500 focus:ring-1 focus:ring-blue-500'}
               `}
               placeholder="tu@email.com"
@@ -95,10 +56,10 @@ export default function LoginPage() {
               {...register('password')}
               type="password"
               className={`w-full px-4 py-3 bg-gray-800/50 border rounded-xl focus:outline-none text-white transition-all
-                ${errors.password 
-                  ? 'border-red-500 focus:ring-1 focus:ring-red-500' 
+                ${errors.password
+                  ? 'border-red-500 focus:ring-1 focus:ring-red-500'
                   : 'border-gray-700 focus:border-blue-500 focus:ring-1 focus:ring-blue-500'}
-              `}  
+              `}
               placeholder="••••••"
             />
             {errors.password && (

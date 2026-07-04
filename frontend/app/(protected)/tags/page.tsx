@@ -1,45 +1,12 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { tagService } from '@/services/tag';
-import { Tag } from '@/types/tag';
-import { toast } from 'sonner';
+import { useTags } from '@/hooks/useTags';
 import ConfirmModal from '@/components/ConfirmModal';
 import TagForm from './_components/TagForm';
 import TagList from './_components/TagList';
 
 export default function TagsPage() {
-  const [tags, setTags] = useState<Tag[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [tagToDelete, setTagToDelete] = useState<number | null>(null)
-
-  const loadTags = async () => {
-    try {
-      const data = await tagService.getAll();
-      setTags(data);
-    } catch (err: any) {
-      console.error(`No se pudieron cargar las etiquetas | ${err}`);
-      toast.error(err)
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  useEffect(() => { loadTags() }, []);
-
-  const onDeleteConfirm = async () => {
-    if (tagToDelete === null) return;
-
-    try {
-      await tagService.delete(tagToDelete);
-      setTags((prev) => prev.filter((tag) => tag.id !== tagToDelete));
-      toast.success('Etiqueta eliminada')
-    } catch (err: any) {
-      toast.error('No se pudo eliminar la etiqueta')
-    }
-    setTagToDelete(null)
-  }
-
+  const { tags, loading, tagToDelete, setTagToDelete, deleteTag, loadTags } = useTags();
 
   if (loading) {
     return <div className='text-white p-8'>Cargando etiquetas...</div>
@@ -63,7 +30,7 @@ export default function TagsPage() {
       <ConfirmModal
         isOpen={tagToDelete !== null}
         onClose={() => setTagToDelete(null)}
-        onConfirm={onDeleteConfirm}
+        onConfirm={deleteTag}
         title='¿Eliminar etiqueta?'
         message='Esta acción no se puede deshacer. La etiqueta desaparecerá de todas las tareas asignadas.'
       />

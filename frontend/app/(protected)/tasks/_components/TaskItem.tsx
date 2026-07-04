@@ -2,24 +2,16 @@
 
 import Button from '@/components/ui/Button';
 import { Task } from '@/types/task'
+import { formatDateToDisplay } from '@/utils/date';
 
 interface TaskItemProps {
-  task: Task;
-  onToggle: (task: Task) => void;
-  onDelete: (id: number) => void;
-  onEdit: (task: Task) => void;
+  readonly task: Task;
+  readonly onToggle: (task: Task) => void;
+  readonly onDelete: (id: number) => void;
+  readonly onEdit: (task: Task) => void;
 }
 
 export default function TaskItem({ task, onToggle, onDelete, onEdit }: TaskItemProps) {
-  
-  const formatDate = (dateString?: string) => {
-    if (!dateString) return null;
-
-    return new Date(dateString).toLocaleDateString('es-ES', {
-      day: 'numeric',
-      month: 'short'
-    });
-  };
 
   return (
     <div className={`group flex items-start gap-3 md:gap-4 p-3 md:p-4 rounded-xl border transition-all duration-200
@@ -29,7 +21,7 @@ export default function TaskItem({ task, onToggle, onDelete, onEdit }: TaskItemP
     }>
       <button
         onClick={() => onToggle(task)}
-        className={`cursor-pointer shrink-0 mt-1 w-6 h-6 rounded-full border-2 flex items-center justify-center transition-colors cursor-pointer
+        className={`cursor-pointer shrink-0 mt-1 w-6 h-6 rounded-full border-2 flex items-center justify-center transition-colors
         ${task.completed 
           ? 'bg-green-500 border-green-500 text-white' 
           : 'border-gray-500 hover:border-blue-500 text-transparent'}`
@@ -52,7 +44,7 @@ export default function TaskItem({ task, onToggle, onDelete, onEdit }: TaskItemP
         <div className='flex flex-wrap items-center gap-2 md:gap-3 mt-2 md:mt-3'>
           {task.deadline && (
             <span className={`text-xs flex items-center gap-1 ${task.completed ? 'text-gray-600' : 'text-red-400'}`}>
-              {formatDate(task.deadline)}
+              {formatDateToDisplay(task.deadline)}
             </span>
           )}
 
@@ -91,7 +83,6 @@ export default function TaskItem({ task, onToggle, onDelete, onEdit }: TaskItemP
           Eliminar
         </Button>
       </div>
-
     </div>
   );
 }
