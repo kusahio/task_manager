@@ -9,6 +9,7 @@ import TaskForm from './_components/TaskForm';
 import Modal from '@/components/ui/Modal';
 import ConfirmModal from '@/components/ConfirmModal';
 import { Task } from '@/types/task';
+import Spinner from '@/components/ui/Spinner';
 
 export default function TaskPage() {
   const { tasks, tags, loading, editingTask, setEditingTask, loadData } = useTasks();
@@ -32,8 +33,10 @@ export default function TaskPage() {
 
       {loading ? (
         <div className='flex justify-center py-20'>
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
+          <Spinner />
         </div>
+
+
       ) : (
         <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8 items-start'>
           <div className='lg:col-span-1'>

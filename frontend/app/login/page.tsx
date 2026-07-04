@@ -3,6 +3,7 @@
 import { useLogin } from '@/hooks/useLogin';
 import Link from 'next/link';
 import Button from '@/components/ui/Button';
+import Spinner from '@/components/ui/Spinner';
 
 export default function LoginPage() {
   const { globalError, register, errors, isSubmitting, submitHandler, status } = useLogin();
@@ -10,7 +11,7 @@ export default function LoginPage() {
   if (status === 'loading' || status === 'authenticated') {
     return (
       <div className="min-h-screen bg-gray-950 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
+        <Spinner />
       </div>
     )
   }
