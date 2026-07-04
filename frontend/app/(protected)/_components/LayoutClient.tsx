@@ -35,7 +35,7 @@ export default function LayoutClient({ children, userEmail} : Props){
 
   return (
     <div className='min-h-screen bg-gray-900 text-gray-100 flex flex-col lg:flex-row'>
-      <div className='lg:hidden bg-gray-800 p-4 flex intems-center justify-between border-b border-gray-700 sticky top-0 z-30'>
+      <div className='lg:hidden bg-gray-800 p-4 flex items-center justify-between border-b border-gray-700 sticky top-0 z-30'>
         <h1 className='font-bold text-xl text-blue-400'>Task Manager</h1>
         <button
           onClick={() => setIsSidebarOpen(true)}
@@ -55,7 +55,7 @@ export default function LayoutClient({ children, userEmail} : Props){
             <CloseIcon />
           </button>
         </div>
-        <nav className='felx-1 p-4 space-y-2 overflow-y-auto'>
+        <nav className='flex-1 p-4 space-y-2 overflow-y-auto'>
           {navItems.map(item => {
             const isActive = pathName == item.href;
 

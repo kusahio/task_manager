@@ -18,7 +18,7 @@ export default function TagForm({ onSuccess }: TagFormProps) {
           <label className='block text-sm text-gray-400 mb-1'>Nombre de la etiqueta</label>
           <input
             {...register('name')}
-            className={`w-full bg-gray-700 text-white rounder p-2 focus:outline-none border 
+            className={`w-full bg-gray-700 text-white rounded p-2 focus:outline-none border 
             ${errors.name ? 'border-red-500' : 'border-transparent focus:border-blue-500'}`}
             placeholder='Ej: Trabajo, Compras...'
           />
