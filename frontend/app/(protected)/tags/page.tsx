@@ -16,9 +16,7 @@ export default function TagsPage() {
     <div className='p-4 md:p-8 max-w-6xl mx-auto'>
       <h1 className='text-2xl md:text-3xl font-bold text-white mb-6 md:mb-8'>Etiquetas</h1>
       <div className='grid grid-cols-1 lg:grid-cols-2 gap-8 items-start'>
-        <div className='bg-gray-800 p-5 md:p-6 rounded-xl border border-gray-700 shadow-lg'>
-          <TagForm onSuccess={loadTags} />
-        </div>
+        <TagForm onSuccess={loadTags} />
         <div className='bg-gray-800/50 p-5 md:p-6 rounded-xl border border-gray-700'>
           <TagList
             tags={tags}
