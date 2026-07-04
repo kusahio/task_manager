@@ -4,32 +4,31 @@ import { useState } from 'react';
 import { toast } from 'sonner';
 import { tagService } from '@/services/tag';
 import { Tag } from '@/types/tag';
-import { DEFAULT_TAG_COLOR } from '@/constants/index';
+import { DEFAULT_TAG_COLOR } from '@/constants';
+
+type EditingTag = { id: number; name: string; color: string } | null;
 
 export function useTagEdit(onRefresh: () => void) {
-  const [editingId, setEditingId] = useState<number | null>(null);
-  const [editName, setEditName] = useState('');
-  const [editColor, setEditColor] = useState('');
+  const [editing, setEditing] = useState<EditingTag>(null);
 
   const startEditing = (tag: Tag) => {
-    setEditingId(tag.id);
-    setEditName(tag.name);
-    setEditColor(tag.color || DEFAULT_TAG_COLOR);
+    setEditing({ id: tag.id, name: tag.name, color: tag.color || DEFAULT_TAG_COLOR });
   };
 
-  const cancelEditing = () => {
-    setEditingId(null);
-    setEditName('');
-    setEditColor('');
+  const cancelEditing = () => setEditing(null);
+
+  const updateField = (field: 'name' | 'color', value: string) => {
+    setEditing((prev) => (prev ? { ...prev, [field]: value } : prev));
   };
 
-  const handleSave = async (id: number) => {
-    if (!editName.trim()) {
+  const handleSave = async () => {
+    if (!editing) return;
+    if (!editing.name.trim()) {
       toast.error('El nombre de la etiqueta no puede estar vacío');
       return;
     }
     try {
-      await tagService.update(id, { name: editName.trim(), color: editColor });
+      await tagService.update(editing.id, { name: editing.name.trim(), color: editing.color });
       toast.success('La etiqueta se actualizó correctamente');
       onRefresh();
       cancelEditing();
@@ -38,10 +37,10 @@ export function useTagEdit(onRefresh: () => void) {
     }
   };
 
-  const handleKeyDown = (e: React.KeyboardEvent, id: number) => {
-    if (e.key === 'Enter') handleSave(id);
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') handleSave();
     if (e.key === 'Escape') cancelEditing();
   };
 
-  return { editingId, editName, editColor, setEditName, setEditColor, startEditing, cancelEditing, handleSave, handleKeyDown };
+  return { editing, startEditing, cancelEditing, updateField, handleSave, handleKeyDown };
 }

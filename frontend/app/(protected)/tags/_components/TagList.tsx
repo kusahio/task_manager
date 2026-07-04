@@ -12,26 +12,18 @@ interface TagListProps {
 }
 
 function TagList({ tags, onDelete, onRefresh }: TagListProps) {
-  const { 
-    editingId, editName, 
-    editColor, setEditName, 
-    setEditColor, startEditing, 
-    cancelEditing, handleSave, 
-    handleKeyDown 
-  } = useTagEdit(onRefresh);
+  const { editing, startEditing, cancelEditing, updateField, handleSave, handleKeyDown } = useTagEdit(onRefresh);
 
   return (
     <div className='bg-gray-800 p-6 rounded-xl shadow-lg'>
       <h2 className='text-xl font-semibold text-green-400 mb-4'>Mis etiquetas</h2>
 
       {tags.length === 0 ? (
-        <p className='text-gray-500 text-center py-4'>
-          No existen etiquetas aún
-        </p>
+        <p className='text-gray-500 text-center py-4'>No existen etiquetas aún</p>
       ) : (
         <div className='space-y-3 max-h-100 overflow-y-auto pr-2 custom-scrollbar'>
           {tags.map(tag => {
-            const isEditing = editingId === tag.id;
+            const isEditing = editing?.id === tag.id;
 
             return (
               <div key={tag.id}
@@ -41,18 +33,26 @@ function TagList({ tags, onDelete, onRefresh }: TagListProps) {
                 <div className='flex items-center gap-3 flex-1'>
                   {isEditing ? (
                     <>
-                      <input type="color" value={editColor} onChange={(e) => setEditColor(e.target.value)}
+                      <input
+                        type="color"
+                        value={editing.color}
+                        onChange={(e) => updateField('color', e.target.value)}
                         className='w-6 h-6 bg-transparent cursor-pointer rounded overflow-hidden'
                       />
-                      <input type="text" value={editName}
-                        onChange={(e) => setEditName(e.target.value)}
-                        onKeyDown={(e) => handleKeyDown(e, tag.id)}
+                      <input
+                        type="text"
+                        value={editing.name}
+                        onChange={(e) => updateField('name', e.target.value)}
+                        onKeyDown={handleKeyDown}
                         className='bg-gray-900 text-white px-2 py-1 rounded border border-gray-600 focus:border-blue-500 outline-none w-full max-w-[200px]'
                       />
                     </>
                   ) : (
                     <>
-                      <span className='w-4 h-4 rounded-full shadow-sm ring-1 ring-white/10' style={{ backgroundColor: tag.color || DEFAULT_TAG_COLOR }}></span>
+                      <span
+                        className='w-4 h-4 rounded-full shadow-sm ring-1 ring-white/10'
+                        style={{ backgroundColor: tag.color || DEFAULT_TAG_COLOR }}
+                      />
                       <span className='text-white font-medium'>{tag.name}</span>
                     </>
                   )}
@@ -61,8 +61,9 @@ function TagList({ tags, onDelete, onRefresh }: TagListProps) {
                     {isEditing ? (
                       <>
                         <button
-                          onClick={() => handleSave(tag.id)}
-                          className='text-green-400 hover:text-green-300 text-sm font-medium px-2 py-1 bg-green-400/10 rounded hover:bg-green-400/20 transition cursor-pointer'>
+                          onClick={handleSave}
+                          className='text-green-400 hover:text-green-300 text-sm font-medium px-2 py-1 bg-green-400/10 rounded hover:bg-green-400/20 transition cursor-pointer'
+                        >
                           Confirmar
                         </button>
                         <button
@@ -91,7 +92,7 @@ function TagList({ tags, onDelete, onRefresh }: TagListProps) {
                   </div>
                 </div>
               </div>
-            )
+            );
           })}
         </div>
       )}
