@@ -12,6 +12,7 @@ class TaskBase(BaseModel):
 
 class TaskCreate(TaskBase):
     tags: Optional[List[int]] = []
+    new_tag_names: Optional[List[str]] = [] 
 
 class TaskUpdate(BaseModel):
     title: Optional[str] = None
