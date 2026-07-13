@@ -4,7 +4,7 @@ from datetime import datetime
 from google import genai
 from google.genai import types
 from sqlalchemy.orm import Session
-from backend.schemas.task import Task
+from schemas.task import Task
 from config.settings import settings
 from schemas.ai import (
     TaskParseResponse, ChatResponse, ChatRequest,

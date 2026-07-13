@@ -1,8 +1,8 @@
 from sqlalchemy.orm import Session
-from backend.repositories import tag_repository
+from repositories import tag_repository
+from services import tag_service
 from schemas.task import TaskCreate, TaskUpdate
 from schemas.tag import TagCreate
-from services.tag_service import tag_service
 from models.task import Task as TaskModel
 from utils.errors import NotFoundException
 import repositories.task_repository as task_repository
