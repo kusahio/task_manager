@@ -4,7 +4,7 @@ from datetime import datetime
 from google import genai
 from google.genai import types
 from sqlalchemy.orm import Session
-from schemas.task import Task
+from models.task import Task as TaskModel
 from config.settings import settings
 from schemas.ai import (
     TaskParseResponse, ChatResponse, ChatRequest,
@@ -86,7 +86,7 @@ def parse_task_with_ai(text: str) -> TaskParseResponse:
 def _get_user_context(db: Session, user_id: int) -> dict:
     tags = tag_repo.get_tags(db, user_id, 0, 200)
     recent = task_repo.get_tasks_by_user(db, user_id, 0, 10)
-    user_tasks = db.query(Task).filter(Task.user_id == user_id).all()
+    user_tasks = db.query(TaskModel).filter(TaskModel.user_id == user_id).all()
     completed = sum(1 for t in user_tasks if t.completed)
     pending = len(user_tasks) - completed
 
@@ -140,8 +140,12 @@ def chat_with_ai(db: Session, user_id: int, messages: list[dict]) -> ChatRespons
     try:
         response = client.models.generate_content(
             model=AI_GEMINI_MODEL,
-            contents=[{"role": m["role"], "content": m["content"]}
-                      for m in messages],
+            contents=[
+                types.Content(
+                    role=("model" if m["role"] == "assistant" else m["role"]),
+                    parts=[types.Part(text=m["content"])]
+                ) for m in messages
+            ],
             config=types.GenerateContentConfig(
                 system_instruction=system_instruction,
                 response_mime_type=RESPONSE_MIME_TYPE,

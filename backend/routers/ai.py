@@ -5,7 +5,6 @@ from schemas.ai import (
     ChatRequest, ChatResponse,
     SuggestRequest, SuggestResponse,
 )
-from schemas.tag import TagCreate
 from services import ai_service
 from models.user import User
 from utils.dependencies import get_current_user

@@ -7,6 +7,7 @@ def create_task(db: Session, task: TaskCreate, user_id: int):
     task_data = task.model_dump()
 
     tags_id = task_data.pop('tags', [])
+    task_data.pop('new_tag_names', None)
     new_task = TaskModel(**task_data, user_id=user_id)
 
     if tags_id:

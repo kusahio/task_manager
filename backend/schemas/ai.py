@@ -60,9 +60,13 @@ class TaskPreview(BaseModel):
     new_tag_names: List[str] = []
 
 
+class CreateTasksData(BaseModel):
+    tasks: List[TaskPreview] = []
+
+
 class ChatAction(BaseModel):
     type: Literal["create_tasks", "none"] = "none"
-    data: Optional[dict] = None
+    data: Optional[CreateTasksData] = None
 
 
 class ChatResponse(BaseModel):

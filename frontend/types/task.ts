@@ -14,6 +14,7 @@ export interface TaskCreate {
   description?: string;
   deadline?: string | null;
   tags?: number[];
+  new_tag_names?: string[];
 }
 
 export interface TaskUpdate {
