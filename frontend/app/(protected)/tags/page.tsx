@@ -8,22 +8,17 @@ import TagList from './_components/TagList';
 export default function TagsPage() {
   const { tags, loading, tagToDelete, setTagToDelete, deleteTag, loadTags } = useTags();
 
-  if (loading) {
-    return <div className='text-white p-8'>Cargando etiquetas...</div>
-  }
-
   return (
-    <div className='p-4 md:p-8 max-w-6xl mx-auto'>
+    <div className='p-4 md:p-8 max-w-6xl mx-auto animate-fade-in'>
       <h1 className='text-2xl md:text-3xl font-bold text-white mb-6 md:mb-8'>Etiquetas</h1>
       <div className='grid grid-cols-1 lg:grid-cols-2 gap-8 items-start'>
         <TagForm onSuccess={loadTags} />
-        <div className='bg-gray-800/50 p-5 md:p-6 rounded-xl border border-gray-700'>
-          <TagList
-            tags={tags}
-            onDelete={(id) => setTagToDelete(id)}
-            onRefresh={loadTags}
-          />
-        </div>
+        <TagList
+          tags={tags}
+          loading={loading}
+          onDelete={(id) => setTagToDelete(id)}
+          onRefresh={loadTags}
+        />
       </div>
       <ConfirmModal
         isOpen={tagToDelete !== null}

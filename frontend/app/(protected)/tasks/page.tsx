@@ -33,18 +33,15 @@ export default function TasksPage() {
         <h1 className="text-2xl md:text-3xl font-bold text-white">Tareas</h1>
       </div>
 
-      {loading ? (
-        <div className="text-white text-center py-12">Cargando tareas...</div>
-      ) : (
-        <div className="grid grid-cols-1 gap-8">
-          <TaskList
-            tasks={tasks}
-            onToggle={handleToggle}
-            onDeleteRequest={(id) => setTaskToDelete(id)}
-            onEditTask={(task) => setEditingTask(task)}
-          />
-        </div>
-      )}
+      <div className="grid grid-cols-1 gap-8">
+        <TaskList
+          tasks={tasks}
+          loading={loading}
+          onToggle={handleToggle}
+          onDeleteRequest={(id) => setTaskToDelete(id)}
+          onEditTask={(task) => setEditingTask(task)}
+        />
+      </div>
 
       {/* Edit modal */}
       {editingTask && (

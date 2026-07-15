@@ -10,12 +10,6 @@ interface Props {
   userEmail?: string | null;
 }
 
-const navItems = [
-  { href: '/dashboard', label: 'Dashboard' },
-  { href: '/tasks', label: 'Mis tareas' },
-  { href: '/tags', label: 'Etiquetas' },
-];
-
 export default function LayoutClient({ children, userEmail }: Readonly<Props>) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
@@ -23,14 +17,15 @@ export default function LayoutClient({ children, userEmail }: Readonly<Props>) {
     <div className='min-h-screen bg-gray-900 text-gray-100 flex flex-col lg:flex-row'>
       <MobileHeader onMenuOpen={() => setIsSidebarOpen(true)} />
       <Sidebar
-        navItems={navItems}
         userEmail={userEmail}
         isOpen={isSidebarOpen}
         onClose={() => setIsSidebarOpen(false)}
       />
       <SidebarOverlay isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
       <main className='flex-1 p-4 md:p-8 overflow-y-auto w-full max-w-dvw'>
-        {children}
+        <div className="animate-fade-in">
+          {children}
+        </div>
       </main>
     </div>
   );

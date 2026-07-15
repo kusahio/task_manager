@@ -1,114 +1,134 @@
-# Backend — Task Manager API
+# Backend — TaskFlow API
 
-Este directorio contiene la API backend desarrollada con **FastAPI (Python)**. Provee autenticación, gestión de usuarios y operaciones CRUD de tareas.
+API RESTful desarrollada con **FastAPI (Python)**. Proporciona autenticación JWT, CRUD de tareas y etiquetas, e integración con **Gemini 2.5 Flash** para funcionalidades de IA conversacional.
 
 ---
 
-## Technologías usadas
+## Tecnologías
 
-- FastAPI
+| Paquete | Versión | Propósito |
+|---------|---------|-----------|
+| FastAPI | 0.128.0 | Framework web |
+| SQLAlchemy | 2.0.45 | ORM |
+| Alembic | 1.17.2 | Migraciones |
+| PostgreSQL | — | Base de datos |
+| Pydantic | 2.12.5 | Validación de datos |
+| python-jose | 3.5.0 | JWT |
+| bcrypt / passlib | — | Hashing de contraseñas |
+| google-genai | 2.11.0 | Gemini AI SDK |
+| loguru | 0.7.3 | Logging |
+| pytest | 9.0.2 | Testing |
+
+---
+
+## Requisitos
+
 - Python 3.10+
 - PostgreSQL
-- SQLAlchemy
-- Alembic
-- Pydantic
-- JWT Authentication
-- CORS Middleware
 
 ---
 
 ## Instalación
 
-Desde la raíz del proyecto:
-
 ```sh
 cd backend
-```
-
-Crear un entorno virtual:
-
-```sh
 python -m venv .venv
-```
 
-Activarlo:
+# Activar:
+# macOS / Linux
+source .venv/bin/activate
+# Windows
+.venv\Scripts\activate
 
-```sh
-source .venv/bin/activate     # macOS / Linux
-.venv\Scripts\activate        # Windows
-```
-
-Instalar dependencias:
-
-```sh
 pip install -r requirements.txt
 ```
 
----
-
 ## Variables de Entorno
 
-Crear un archivo .env:
+Crear archivo `.env` en la raíz de `backend/`:
 
 ```env
-DATABASE_URL=postgresql://user:password@localhost:5432/task_manager
-JWT_SECRET=tu_llave_secreta
+# Database
+DB_USER=TU_USUARIO_POSTGRES
+DB_PASSWORD=TU_PASSWORD_SEGURA
+DB_HOST=127.0.0.1
+DB_PORT=5432
+DB_NAME=task_manager
+
+# JWT
+SECRET_KEY=GENERA_UNA_CLAVE_SEGURA_HEX
+ALGORITHM=HS256
+ACCESS_TOKEN_EXPIRE_MINUTES=10080
+
+# Security
+SIGNUP_SECRET_KEY=CLAVE_SECRETA_PARA_REGISTRO
+
+# CORS — origen del frontend (reemplazar con tu URL local)
+LOCALHOST_ORIGIN=http://127.0.0.1:3000
+
+# AI
+GEMINI_API_KEY=TU_API_KEY_DE_GEMINI
 ```
 
----
+## Base de Datos
 
-## Migraciones de Base de Datos
+Crear la base de datos en PostgreSQL:
 
-Ejecutar migraciones con Alembic:
+```sh
+createdb task_manager
+```
+
+Ejecutar migraciones:
 
 ```sh
 alembic upgrade head
 ```
 
----
+(Si es una instalación limpia, todas las migraciones se aplicarán secuencialmente.)
 
-## Ejecutar la API
+## Ejecutar (Entorno Local)
 
 ```sh
 uvicorn main:app --reload
 ```
 
-La API estará disponible en:
+Una vez iniciado, la API responde en las siguientes rutas (reemplazar con tu host local):
+
+| Recurso | URL |
+|---------|-----|
+| API | `http://TU_HOST_LOCAL:8000` |
+| Swagger UI | `http://TU_HOST_LOCAL:8000/docs` |
+| OpenAPI JSON | `http://TU_HOST_LOCAL:8000/openapi.json` |
+
+> Ejemplo: si tu servidor corre en `127.0.0.1:8000`, la API queda en `http://127.0.0.1:8000`. En producción se usa un dominio real (ej. `https://api.misitio.com`).
+
+## Tests
+
+```sh
+pytest -v
+```
+
+## Endpoints
+
+Ver la [documentación principal](../README.md#-api-endpoints) para la lista completa.
+
+## Arquitectura
 
 ```
-http://localhost:8000
+Routers  →  Services  →  Repositories  →  Models (SQLAlchemy)
+   │            │              │
+   └────────────┴──────────────┴── Schemas (Pydantic)
 ```
 
-Documentación Swagger:
+- **Routers**: definen rutas HTTP y dependencias (auth)
+- **Services**: lógica de negocio, integración con IA
+- **Repositories**: consultas a base de datos (SQLAlchemy)
+- **Models**: tablas y relaciones ORM
+- **Schemas**: validación de entrada/salida con Pydantic
 
-```
-http://localhost:8000/docs
-```
+## Seguridad
 
----
-
-## Endpoints Principales
-
-- POST `/auth/login`
-- POST `/auth/register`
-- GET `/tasks`
-- POST `/tasks`
-- PUT `/tasks/{id}`
-- DELETE `/tasks/{id}`
-
----
-
-## Decisiones de Arquitectura
-
-- FastAPI por su rendimiento y documentación automática
-- JWT para autenticación sin estado
-- SQLAlchemy + Alembic para la gestión de base de dato
-- Separación clara entre routers, servicios y modelos
-
----
-
-## Notas de Seguridad
-
-- Nunca subir archivos .env al repositorio
-- Usar claves seguras en producción
+- `.env` no debe subirse al repositorio (está en `.gitignore`)
+- Usar claves JWT seguras en producción
+- El `SIGNUP_SECRET_KEY` protege el registro de nuevos usuarios
 - Forzar HTTPS en entornos productivos

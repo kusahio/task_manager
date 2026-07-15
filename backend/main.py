@@ -9,14 +9,14 @@ from utils.logger import logger
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    logger.info("Task Manager API iniciada correctamente")
+    logger.info("TaskFlow API iniciada correctamente")
 
     yield
 
-    logger.info("Task Manager API deteniendo servicios...")
+    logger.info("TaskFlow API deteniendo servicios...")
 
 app = FastAPI(
-    title='Task Manager API',
+    title='TaskFlow API',
     description='API creada con FastAPI, SQLAlchemy y Pydantic',
     version='1.0.0',
     lifespan=lifespan
@@ -67,5 +67,5 @@ app.include_router(api_router, prefix='/api/v1')
 @app.get('/')
 def home():
     return {
-        'message': 'Bienvenido a la api de Task Manager'
+        'message': 'Bienvenido a la api de TaskFlow'
     }
