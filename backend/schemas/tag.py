@@ -1,10 +1,15 @@
 # schemas/tag.py
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, field_validator
 from typing import Optional
 
 class TagBase(BaseModel):
     name: str
     color: Optional[str] = None
+
+    @field_validator('name')
+    @classmethod
+    def normalize_name(cls, v: str) -> str:
+        return v.strip()
 
 class TagCreate(TagBase):
     pass

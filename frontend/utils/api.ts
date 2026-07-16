@@ -1,7 +1,6 @@
 import axios from 'axios';
 import { getSession, signOut } from 'next-auth/react';
-
-const baseURL = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://127.0.0.1:8000/api/v1';
+import { baseURL } from '@/constants/index';
 
 const api = axios.create({
   baseURL,
@@ -23,10 +22,10 @@ api.interceptors.request.use(async (config) => {
 api.interceptors.response.use(
   (response) => response,
   async (error) => {
-    const isClient = typeof window !== 'undefined';
+    const isClient = globalThis.window !== undefined;
     const isUnauthorized = error.response?.status === 401;
 
-    if (isClient && isUnauthorized && !window.location.pathname.includes('/login')){
+    if (isClient && isUnauthorized && !globalThis.location.pathname.includes('/login')){
       await signOut();
     }
 

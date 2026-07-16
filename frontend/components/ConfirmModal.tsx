@@ -19,7 +19,7 @@ export default function ConfirmModal({
   title, 
   message,
   isLoading = false
-}: ConfirmModalProps) {
+}: Readonly<ConfirmModalProps>) {
   
   return (
     <Modal isOpen={isOpen} onClose={onClose} title={title}>

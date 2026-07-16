@@ -10,6 +10,9 @@ class Settings(BaseSettings):
     algorithm: str
     access_token_expire_minutes: int
 
+    # GEMINI API KEY
+    gemini_api_key: str
+
     # variables db
     db_user: Optional[str] = None
     db_password: Optional[str] = None

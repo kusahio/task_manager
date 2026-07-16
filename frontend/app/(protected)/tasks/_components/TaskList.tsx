@@ -1,94 +1,54 @@
 'use client';
 
-import { useState } from 'react';
-import { toast } from 'sonner';
-import { Task, taskService } from '@/services/task';
+import { memo } from 'react';
+import { Task } from '@/types/task';
 import TaskItem from './TaskItem';
-import Modal from '@/components/ui/Modal';
-import Button from '@/components/ui/Button';
+import { TaskCardSkeleton } from '@/components/ui/Skeleton';
 
-interface TaskListProps{
-  tasks: Task[];
-  onTaskUpdate: () => void;
-  onEditTask: (task: Task) => void;
+interface TaskListProps {
+  readonly tasks: Task[];
+  readonly onToggle: (task: Task) => void;
+  readonly onDeleteRequest: (id: number) => void;
+  readonly onEditTask: (task: Task) => void;
+  readonly loading?: boolean;
 }
 
-export default function TaskList({tasks, onTaskUpdate, onEditTask} : TaskListProps) {
-  const [taskToDelete, setTaskToDelete] = useState<number | null>(null);
-  const [isDeleting, setIsDeleting] = useState(false);
-
-  const handleToggle = async (task: Task) => {
-    try{
-      await taskService.toggleComplete(task.id, task.completed);
-      onTaskUpdate();
-
-      !task.completed 
-        ? toast.success('¡Tarea marcada como completada!') 
-        : toast.info('La tarea ha vuelto a estar pendiente');
-    } catch (err: any){
-      toast.error(`Hubo un error al actualizar la tarea | ${err}`)
-    }
-  }
-
-  const confirmDelete = async () => {
-    if (taskToDelete === null) return;
-
-    setIsDeleting(true);
-
-    try{
-      await taskService.delete(taskToDelete);
-      toast.success('La tarea ha sido eliminada');
-      onTaskUpdate();
-      setTaskToDelete(null);
-    } catch (err: any){
-      toast.error(`Ha ocurrido un error al intentar eliminar la tarea | ${err}`)
-    } finally{
-      setIsDeleting(false)
-    }
-  }
-
-  if (tasks.length === 0){
+function TaskList({ tasks, onToggle, onDeleteRequest, onEditTask, loading }: TaskListProps) {
+  if (loading) {
     return (
-      <div className='text-center py-10 text-gray-500 bg-gray-800/50 rounded-xl border border-dashed border-gray-700'>
-        <p className='text-lg'>No hay tareas pendientes</p>
+      <div className="space-y-3 animate-fade-in">
+        {Array.from({ length: 4 }).map((_, i) => (
+          <TaskCardSkeleton key={i} />
+        ))}
+      </div>
+    );
+  }
+
+  if (tasks.length === 0) {
+    return (
+      <div className='flex flex-col items-center justify-center py-16 text-center bg-gray-800/30 rounded-xl border border-dashed border-gray-700/60 animate-fade-in'>
+        <svg className="w-16 h-16 text-gray-600 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
+        </svg>
+        <p className='text-lg text-gray-500 font-medium'>No hay tareas pendientes</p>
+        <p className='text-sm text-gray-600 mt-1'>Usa el panel de IA para crear tu primera tarea</p>
       </div>
     )
   }
 
   return (
-    <>
-      <div className='space-y-3'>
-        {tasks.map(task => (
-          <TaskItem 
-            key={task.id} 
-            task={task} 
-            onToggle={handleToggle} 
-            onDelete={(id) => setTaskToDelete(id)}
-            onEdit={onEditTask}
-          />
-        ))}
-      </div>
-      <Modal isOpen={taskToDelete !== null} onClose={() => setTaskToDelete(null)} title='¿Eliminar Tarea?'>
-        <div className='space-y-4 '>
-          <p className='text-gray-300'>Esta acción no se puede deshacer. ¿Estás seguro?</p>
-          <div className='flex justify-end gap-3 pt-2'>
-            <Button
-              variant='ghost'
-              onClick={() => setTaskToDelete(null)}
-              disabled={isDeleting}
-            >
-              Cancelar
-            </Button>
-            <Button
-              variant='danger'
-              onClick={confirmDelete}
-              isLoading={isDeleting}
-            >
-              {isDeleting ? 'Eliminando...' : 'Sí, Eliminar'}
-            </Button>
-          </div>
-        </div>
-      </Modal>
-    </>
-  )
+    <div className='space-y-3 animate-fade-in'>
+      {tasks.map(task => (
+        <TaskItem
+          key={task.id}
+          task={task}
+          onToggle={onToggle}
+          onDelete={onDeleteRequest}
+          onEdit={onEditTask}
+        />
+      ))}
+    </div>
+  );
 }
+
+export default memo(TaskList);

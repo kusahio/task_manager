@@ -1,20 +1,22 @@
 'use client'
 
-import { Tag } from '@/services/tag'
+import { memo } from 'react';
+import { Tag } from '@/types/tag'
+import { DEFAULT_TAG_COLOR } from '@/constants/index';
 
 interface TagSelectorProps{
-  availableTags : Tag[];
-  selectedTagIds: number[];
-  onChange: (ids: number[]) => void
+  readonly availableTags : Tag[];
+  readonly selectedTagIds: number[];
+  readonly onChange: (ids: number[]) => void
 }
 
-export default function TagSelector({
+function TagSelector({
   availableTags,
   selectedTagIds,
   onChange
 } : TagSelectorProps) {
 
-  const toogleTag = (id: number) => {
+  const toggleTag = (id: number) => {
     if (selectedTagIds.includes(id)){
       onChange(selectedTagIds.filter(tagId => tagId !== id));
     } else {
@@ -35,7 +37,7 @@ export default function TagSelector({
           <button
             key={tag.id}
             type='button'
-            onClick={() => toogleTag(tag.id)}
+            onClick={() => toggleTag(tag.id)}
             className={`
               px-3 py-1 rounded-full text-xs font-medium transition-all border cursor-pointer
               ${isSelected 
@@ -44,7 +46,7 @@ export default function TagSelector({
               }
             `}
             style={{
-              backgroundColor: isSelected ? tag.color || '#3b82f6' : undefined,
+              backgroundColor: isSelected ? tag.color || DEFAULT_TAG_COLOR : undefined,
               borderColor: isSelected ? 'transparent' : tag.color || '#4b5563',
               color: isSelected ? '#fff' : undefined
             }}
@@ -56,3 +58,5 @@ export default function TagSelector({
     </div>
   )
 }
+
+export default memo(TagSelector);

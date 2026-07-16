@@ -50,3 +50,5 @@ frontend/node_modules/
 frontend/dist/
 frontend/build/
 frontend/.next/
+
+NEW_FEATURES_AND_NEXT_STEPS.md

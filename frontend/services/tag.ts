@@ -1,20 +1,5 @@
 import api from "@/utils/api";
-
-export interface Tag{
-  id: number;
-  name: string;
-  color: string | null;
-}
-
-export interface TagCreate{
-  name: string;
-  color?: string;
-}
-
-export interface TagUpdate{
-  name?: string;
-  color?: string;
-}
+import { Tag, TagCreate, TagUpdate } from "@/types/tag";
 
 export const tagService = {
   getAll: async () => {
@@ -33,6 +18,6 @@ export const tagService = {
   },
 
   delete: async (id: number) => {
-    await api.delete<Tag>(`/tags/${id}`)
-  },
+    await api.delete(`/tags/${id}`);
+  }
 }
